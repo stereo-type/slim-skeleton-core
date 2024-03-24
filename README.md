@@ -18,8 +18,9 @@
     контейнера
 11. Устанавливаем зависимости PHP командой `composer install`
 12. Устанавливаем зависимости JS командой `npm i`
-13. Создаем миграции командной `php cli doctrine:migrations:diff`
-14. Выполняем миграции командной `php cli doctrine:migrations:migrate`
+13. Сгенерировать ключ приложения командой `php cli app:generate-key` и прописать в .env APP_KEY=
+14. Создаем миграции командной `php cli doctrine:migrations:diff`
+15. Выполняем миграции командной `php cli doctrine:migrations:migrate`
 
 ## Добавляем в проект директории конфигов
 
