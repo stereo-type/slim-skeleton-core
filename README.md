@@ -14,7 +14,7 @@
 8. В корне основного проекта создаем папки storage и public
 
 9. Запускаем контейнеры командой `docker-compose up -d` из папки [/app/Core/_docker](/app/Core/_docker)
-10. Входим в контейнер командой `docker exec -it slim-php-skeleton bash`. Дальнейшие команды будем выполнять из
+10. Входим в контейнер командой `docker exec -it slim-skeleton-app bash`. Дальнейшие команды будем выполнять из
     контейнера
 11. Устанавливаем зависимости PHP командой `composer install`
 12. Устанавливаем зависимости JS командой `npm i`
