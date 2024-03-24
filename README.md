@@ -92,9 +92,9 @@
 
 ### ПОЛЕЗНЫЕ КОМАНДЫ ###
 
-1. docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(docker images -a -q)
-2. cd /home/USER/projects/testproject/docker && docker-compose down && docker-compose up -d --build && chmod -R 777
-   /home/USER/projects/testproject/dockerstorage
-3. docker exec -it testproject-app /bin/bash
-4. ssh -R 4510:127.0.0.1:9003 -p 5022 USER@192.168.1.101
+1. `docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(docker images -a -q)`
+2. `cd /home/USER/projects/testproject/docker && docker-compose down && docker-compose up -d --build && chmod -R 777
+   /home/USER/projects/testproject/dockerstorage`
+3. `docker exec -it testproject-app /bin/bash`
+4. `ssh -R 4510:127.0.0.1:9003 -p 5022 USER@192.168.1.101`
 
