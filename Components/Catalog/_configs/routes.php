@@ -7,7 +7,6 @@
 
 declare(strict_types=1);
 
-use App\Core\Middleware\RoleMiddleware;
 use Slim\App;
 use App\Core\Config;
 use App\Core\Enum\AppEnvironment;

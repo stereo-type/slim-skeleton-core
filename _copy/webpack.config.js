@@ -15,6 +15,9 @@ const projectResourcesPath = path.join(__dirname, '_assets', 'js');
 //TODO мб ускорить как то
 const addCoreFilesToBuild = (directoryPath) => {
     fs.readdirSync(directoryPath).forEach(file => {
+        if (directoryPath === '/var/www/app/Core/_copy') {
+            return;
+        }
         const filePath = path.join(directoryPath, file);
         if (fs.statSync(filePath).isFile() && (file.endsWith('.js') || file.endsWith('.ts'))) {
             // Добавляем только файлы JavaScript в качестве точек входа

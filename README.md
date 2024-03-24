@@ -11,7 +11,7 @@
 5. Копируем из папки [app/Core/_copy](/app/Core/_copy) все файлы в корень проекта
 6. В корне проекта создаем файл .env и копируем в него содержимое [.env.example](/.env.example)
 7. Заполняем файл окружения необходимыми параметрами
-8. В корне основного проекта создаем папки storage и public
+8. В корне основного проекта создаем папки storage,public,migrations
 
 9. Запускаем контейнеры командой `docker-compose up -d` из папки [/app/Core/_docker](/app/Core/_docker)
 10. Входим в контейнер командой `docker exec -it slim-php-skeleton bash`. Дальнейшие команды будем выполнять из
@@ -19,8 +19,7 @@
 11. Устанавливаем зависимости PHP командой `composer install`
 12. Устанавливаем зависимости JS командой `npm i`
 13. Сгенерировать ключ приложения командой `php cli app:generate-key` и прописать в .env APP_KEY=
-14. Создаем миграции командной `php cli doctrine:migrations:diff`
-15. Выполняем миграции командной `php cli doctrine:migrations:migrate`
+14. Подключиться к базе данных прописанной в .env и создать таблицу
 
 ## Добавляем в проект директории конфигов
 
@@ -43,6 +42,7 @@
    app/Core/_configs/container/container.php
     ```php
    <?php
+   
     declare(strict_types=1);
     
     return [
@@ -67,9 +67,9 @@
 5. Добавляем в папку __configs файл routes.php
    ```php
    <?php
+   
    declare(strict_types=1);
-   
-   
+      
    use Slim\App;
    
    return static function (App $app) {
@@ -86,6 +86,11 @@
 4. В папке могут находиться картинки images
 5. В папке могут находиться шрифты fonts
 6. В папке могут находиться стили css и scss
+
+## Билд
+1. Запустить сборку файлов стилей/шаблонов командой `npm run dev`
+2. Создаем миграции командной `php cli doctrine:migrations:diff`
+3. Выполняем миграции командной `php cli doctrine:migrations:migrate`
 
 ## Проекте подключен Bootstrap 5
 
