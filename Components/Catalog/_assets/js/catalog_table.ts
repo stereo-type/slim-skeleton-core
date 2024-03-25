@@ -79,6 +79,16 @@ function initTable(tableContainerElementId: string): void {
 
             }
         }
+        const addButton =target.closest('.--add-catalog-entity');
+        if(addButton) {
+            run_entity_action('0', addButton.getAttribute('action'), url, () => updateTable(tableContainerElementId))
+                ?.then((modal) => {
+
+                    // modal.getElement().addEventListener('hide.bs.modal', function (evt) {
+                    //     // updateTable(tableContainerElementId);
+                    // });
+                });
+        }
     });
 }
 

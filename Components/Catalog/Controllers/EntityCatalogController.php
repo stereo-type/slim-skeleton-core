@@ -138,6 +138,25 @@ abstract class EntityCatalogController extends CatalogController
         );
     }
 
+    /**
+     * @return string|null
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function add_button(): ?string
+    {
+        $data = [
+            'button' => [
+                'name' => 'add',
+                'text' => 'Добавить',
+                'button_class' => 'text-primary-emphasis bg-primary-subtle border-primary-subtle p-1',
+                'attr' => 'style="grid-column: span 2; height: fit-content"',
+            ]
+        ];
+        return $this->twig->fetch('/catalog/add_button.twig', $data);
+    }
+
     public function delete(Request $request, Response $response, array $args): Response
     {
         if (!($this->dataProvider instanceof CatalogFormInterface)) {

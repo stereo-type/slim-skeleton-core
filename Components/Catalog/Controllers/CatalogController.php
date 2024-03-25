@@ -118,7 +118,7 @@ abstract class CatalogController
             $collectorProxy->get('', [$class, 'index'])->setName($reportName);
             $collectorProxy->post('/filter', [$class, 'filter']);
             $class::$method($collectorProxy);
-        })->add(EntityFormRequestMiddleware::class)->add(RoleMiddleware::admin())->add(AuthMiddleware::class);
+        })->add(EntityFormRequestMiddleware::class);
     }
 
     protected static function additional_routes(RouteCollectorProxy $collectorProxy): void
@@ -162,14 +162,14 @@ abstract class CatalogController
         $data = array_merge((array)($request->getParsedBody() ?? []), $request->getQueryParams());
         /**ClearCache*/
         if (!empty($data['clearCache']) && (bool)$data['clearCache']) {
-            $this->clear_filters_from_cache();
+            $this->_clear_filters_from_cache();
             return $response->withHeader('Location', $this->get_index_route())->withStatus(
                 ServerStatus::REDIRECT->value
             );
         }
 
         /**Cache**/
-        $cache = static::USE_CACHE ? $this->get_filters_from_cache() : [];
+        $cache = static::USE_CACHE ? $this->_get_filters_from_cache() : [];
         $data = array_merge($cache, $data);
         $filters = $this->dataProvider->filters($data)->fillData($data);
         $content = $this->_get_content($request->getUri(), $filters, $data);
@@ -184,6 +184,7 @@ abstract class CatalogController
                 'filtersCatalog'    => $filters->render(),
                 'tableContent'      => $content['table']->render(),
                 'tablePaginbar'     => $content['paginbar']->render($this->twig),
+                'addButton'         => $this->add_button(),
             ],
         );
     }
@@ -203,7 +204,7 @@ abstract class CatalogController
         $filters = $this->dataProvider->filters($data)->fillData($data);
 
         $current_filters = $filters->getValues();
-        $cached_filters = static::USE_CACHE ? $this->get_filters_from_cache() : [];
+        $cached_filters = static::USE_CACHE ? $this->_get_filters_from_cache() : [];
         $filter_diff = array_merge(
             array_diff_assoc($current_filters, $cached_filters),
             array_diff_assoc($cached_filters, $current_filters)
@@ -216,7 +217,7 @@ abstract class CatalogController
                 $filters->fillData(['page' => Page::INIT_PAGE], force: true);
             }
             if (static::USE_CACHE) {
-                $this->save_filters_to_cache($filters->getValues());
+                $this->_save_filters_to_cache($filters->getValues());
             }
         }
         $content = $this->_get_content($request->getUri()->withPath($this->get_index_route()), $filters, $data);
@@ -227,6 +228,11 @@ abstract class CatalogController
         $map['page'] = $content['page'];
         $map['per_page'] = $content['per_page'];
         return $this->responseFormatter->asJson($response, $map);
+    }
+
+    protected function add_button(): ?string
+    {
+        return null;
     }
 
     /**
@@ -270,7 +276,7 @@ abstract class CatalogController
         return md5(static::class);
     }
 
-    private function get_filters_from_cache(): array
+    private function _get_filters_from_cache(): array
     {
         if (!$this->session->has(self::CACHE_CATALOG_KEY)) {
             return [];
@@ -284,7 +290,7 @@ abstract class CatalogController
         }
     }
 
-    private function save_filters_to_cache(array $values): void
+    private function _save_filters_to_cache(array $values): void
     {
         if (!$this->session->has(self::CACHE_CATALOG_KEY)) {
             $this->session->put(self::CACHE_CATALOG_KEY, []);
@@ -299,7 +305,7 @@ abstract class CatalogController
         $this->session->put(self::CACHE_CATALOG_KEY, $value);
     }
 
-    private function clear_filters_from_cache(): void
+    private function _clear_filters_from_cache(): void
     {
         if ($this->session->has(self::CACHE_CATALOG_KEY)) {
             $value = $this->session->get(self::CACHE_CATALOG_KEY, []);
@@ -309,5 +315,6 @@ abstract class CatalogController
             }
         }
     }
+
 
 }

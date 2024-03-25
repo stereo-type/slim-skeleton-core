@@ -17,7 +17,11 @@
 {% block content %}
     <div id="live-catalog-container-{{ id }}"
          class="--live-catalog-container live-catalog-container container content-body">
-        <h2>{{ tableHeading }}</h2>
+
+        <div class="live-catalog-head">
+            <h2 class="d-block" style="grid-column: span 10">{{ tableHeading }}</h2>
+            {{ addButton | raw }}
+        </div>
         <form id="--live-catalog-filter" action="{{ requestIndexRoute }}/filter" class="live-catalog-filter"
               method="POST">
             {{ filtersCatalog | raw }}

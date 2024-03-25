@@ -80,6 +80,7 @@
    ```
 
 ## Добавляем в проект директории aссетов
+
 1. В корне проекта добавляем папку _assets
 2. В папке могут находиться шаблоны twig - templates
 3. В папке могут находиться скрипты JS и TS - js
@@ -88,13 +89,31 @@
 6. В папке могут находиться стили css и scss
 
 ## Билд
+
 1. Запустить сборку файлов стилей/шаблонов командой `npm run dev`
 2. Создаем миграции командной `php cli doctrine:migrations:diff`
 3. Выполняем миграции командной `php cli doctrine:migrations:migrate`
 
 ## Проекте подключен Bootstrap 5
 
-Для инициализации использовать скрипт [app/Core/_assets/js/app.ts](/app/Core/_assets/js/app.ts) или шаблон [app/Core/_assets/templates/layout.twig](/app/Core/_assets/templates/layout.twig)
+Для инициализации использовать скрипт [app/Core/_assets/js/app.ts](/app/Core/_assets/js/app.ts) или
+шаблон [app/Core/_assets/templates/layout.twig](/app/Core/_assets/templates/layout.twig)
+
+## Маршрутизация
+
+1. В проекте используется маршрутизация Slim php
+2. Файл `/_configs/routes.php` предназначен для подключения базовых маршрутов - авторизация/профайл/логаут/главная и тд
+3. Все маршруты из папки app находящиеся на любом уровне вложенности в формате `_configs/routes.php` будут добавлены в
+   маршрутную карту.
+4. Таким образом если основной проект будет расположен в папке app, то достаточно описать маршруты, одключать из не надо
+5. `/_configs/routes.php` предназначен для подключения маршрутов выходящих за рамки /app
+
+## Middleware
+
+1. В проекте используется middleware Slim php
+2. Файл `/_configs/middleware.php` предназначен для подключения middleware подключенных ко всему приложению
+
+
 
 ### ПОЛЕЗНЫЕ КОМАНДЫ ###
 

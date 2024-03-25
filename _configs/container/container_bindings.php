@@ -24,6 +24,7 @@ use App\Core\Services\Purifier;
 use App\Core\Services\RequestConvertor;
 use App\Core\Services\Translator;
 use App\Core\Session;
+use App\Core\Utils;
 use Clockwork\Clockwork;
 use Clockwork\DataSource\DoctrineDataSource;
 use Clockwork\Storage\FileStorage;
@@ -80,9 +81,11 @@ $middleware_file = file_exists(CONFIG_PATH . '/middleware.php')
     ? CONFIG_PATH . '/middleware.php' : CORE_CONFIG_PATH . '/middleware.php';
 
 
-require_once __DIR__ . '/../utils.php';
-
-$catalogComponentBindings = require APP_PATH . '/Core/Components/Catalog/_configs/container_bindings.php';
+$inner_containers = Utils::findFiles(APP_PATH, '_configs', 'container_bindings.php', [__FILE__]);
+$innerBindings = [];
+foreach ($inner_containers as $c) {
+    $innerBindings = array_merge($innerBindings,  require $c);
+}
 
 $coreBindings = [
     App::class                              =>
@@ -106,7 +109,7 @@ $coreBindings = [
         static function (Config $config) {
             $paths = $config->get('doctrine.entity_dir');
             //TODO навалить кешей для прода 0.001 секунды для 40 папок
-            foreach (getPathsRecursively(APP_PATH, 'entity') as $p) {
+            foreach (Utils::getPathsRecursively(APP_PATH, 'entity') as $p) {
                 if (!in_array($p, $paths, true)) {
                     $paths[] = $p;
                 }
@@ -231,4 +234,4 @@ $coreBindings = [
     RequestConvertor::class                 => create(RequestConvertor::class),
 ];
 
-return $coreBindings + $catalogComponentBindings;
+return $coreBindings + $innerBindings;

@@ -20,6 +20,7 @@ use Symfony\Bridge\Twig\Extension\AssetExtension;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
+use Symfony\Bridge\Twig\AppVariable;
 use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
@@ -28,13 +29,12 @@ use Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension;
 use Twig\Error\LoaderError;
 use Twig\Extension\DebugExtension;
 use Twig\Extra\Intl\IntlExtension;
+use Twig\RuntimeLoader\FactoryRuntimeLoader;
 
+use App\Core\Utils;
 use App\Core\Config;
 use App\Core\Enum\AppEnvironment;
 
-
-use Twig\RuntimeLoader\FactoryRuntimeLoader;
-use Symfony\Bridge\Twig\AppVariable;
 
 readonly class Builder
 {
@@ -59,7 +59,7 @@ readonly class Builder
         $paths = [VIEW_PATH, $vendorTwigBridgeDirectory.'/Resources/views/Form'];
 //            $t = microtime(true);
         //TODO навалить кешей для прода 0.001 секунды для 40 папок
-        foreach (getPathsRecursively(APP_PATH, 'templates') as $p) {
+        foreach (Utils::getPathsRecursively(APP_PATH, 'templates') as $p) {
             if (!in_array($p, $paths, true)) {
                 $paths[] = $p;
             }

@@ -23,12 +23,12 @@ class DemoUserDataProvider extends EntityDataProvider
 
     public function exclude_entity_properties(): array
     {
-        return ['password'];
+        return ['password', 'assignments'];
     }
 
     public function exclude_entity_filters(): array
     {
-        return ['updatedAt', 'createdAt', 'verifiedAt'];
+        return ['updatedAt', 'createdAt', 'verifiedAt', 'assignments'];
     }
 
     public function exclude_form_elements(): array
@@ -60,7 +60,8 @@ class DemoUserDataProvider extends EntityDataProvider
         $instance->setPassword($this->container->get(HashService::class)->hashPassword($instance->getPassword()));
     }
 
-    public function before_set(object $instance): void {
+    public function before_set(object $instance): void
+    {
         $instance->setPassword('');
     }
 

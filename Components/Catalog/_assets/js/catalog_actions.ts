@@ -92,6 +92,24 @@ function _run_edit(id: string, url: string, afterSuccess: callback = null): Prom
     return _show_form_modal(template, afterSuccess);
 }
 
+function _run_add(url: string, afterSuccess: callback = null): Promise<SlimModal | null> {
+    const template = new ModalTemplateAjax(
+        `modal_edit_entity_0`,
+        url + '/form/0',
+        {'id': 0, 'modal': true},
+        new ModalTemplateParams(
+            ModalActionType.none,
+            'Создать',
+            null,
+            null,
+            ModalBehaviourShow.replace,
+            ModalBehaviourHide.dispose
+        )
+    );
+
+    return _show_form_modal(template, afterSuccess);
+}
+
 function _run_copy(id: string, url: string, afterSuccess: callback = null): Promise<SlimModal | null> {
     const template = new ModalTemplateAjax(
         `modal_copy_entity_${id}`,
@@ -154,6 +172,8 @@ function _run_entity_action(id: string, action: string, url: string, afterSucces
             return _run_copy(id, url, afterSuccess);
         case 'delete':
             return _run_delete(id, url, afterSuccess);
+        case 'add':
+            return _run_add(url, afterSuccess);
         default:
             console.error(`not specified action ${action}`);
             break;
