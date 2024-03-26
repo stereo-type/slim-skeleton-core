@@ -118,7 +118,7 @@ abstract class CatalogController
             $collectorProxy->get('', [$class, 'index'])->setName($reportName);
             $collectorProxy->post('/filter', [$class, 'filter']);
             $class::$method($collectorProxy);
-        })->add(EntityFormRequestMiddleware::class);
+        })->add(EntityFormRequestMiddleware::class)->add(AuthMiddleware::class);
     }
 
     protected static function additional_routes(RouteCollectorProxy $collectorProxy): void

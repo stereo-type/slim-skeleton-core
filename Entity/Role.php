@@ -85,9 +85,9 @@ class Role
         return $this->description;
     }
 
-    public function getUsers(): Collection
+    public function getAssignments(): Collection
     {
-        return $this->users;
+        return $this->assignments;
     }
 
 

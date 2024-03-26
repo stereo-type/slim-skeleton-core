@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Core\Command;
+
+use App\Core\Contracts\EntityManagerServiceInterface;
+use App\Core\Repository\Role\RoleService;
+
+use Exception;
+use Throwable;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class GenerateDefaultRoles extends Command
+{
+    protected static $defaultName = 'app:generate-roles';
+    protected static $defaultDescription = 'Generates default roles';
+
+    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
+    {
+        parent::__construct();
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     * @throws Exception
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        try {
+            $service = new RoleService($this->entityManager);
+            $service->create_default_roles();
+        } catch (Throwable $e) {
+            return Command::FAILURE;
+        }
+
+        return Command::SUCCESS;
+    }
+}
+

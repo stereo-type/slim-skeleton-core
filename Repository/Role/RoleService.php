@@ -2,44 +2,54 @@
 
 namespace App\Core\Repository\Role;
 
+use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Contracts\User\UserInterface;
 use App\Core\Entity\Role;
-use DateTime;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 
 
 readonly class RoleService
 {
 
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerServiceInterface $entityManager)
     {
+    }
+
+    /**
+     * @return void
+     */
+    public function create_default_roles(): void
+    {
+        $role = new Role();
+        $role->setName(Role::ADMIN);
+        $this->entityManager->sync($role);
+        $role = new Role();
+        $role->setName(Role::MANAGER);
+        $this->entityManager->sync($role);
+        $role = new Role();
+        $role->setName(Role::CUSTOMER);
+        $this->entityManager->sync($role);
     }
 
     /**
      * @param Connection $connection
      * @return void
-     * @throws Exception
      */
-    public static function create_default_roles(Connection $connection): void
+    public function remove_default_roles(Connection $connection): void
     {
-        $now = date('Y-m-d H:i:s', time());
-        $connection->insert('roles', ['name' => Role::ADMIN, 'created_at' => $now, 'updated_at' => $now]);
-        $connection->insert('roles', ['name' => Role::CUSTOMER, 'created_at' => $now, 'updated_at' => $now]);
-        $connection->insert('roles', ['name' => Role::MANAGER, 'created_at' => $now, 'updated_at' => $now]);
-    }
-
-    /**
-     * @param Connection $connection
-     * @return void
-     * @throws Exception
-     */
-    public static function remove_default_roles(Connection $connection): void
-    {
-        $connection->delete('roles', ['name' => Role::ADMIN]);
-        $connection->delete('roles', ['name' => Role::CUSTOMER]);
-        $connection->delete('roles', ['name' => Role::MANAGER]);
+        $user = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::ADMIN]);
+        if ($user) {
+            $this->entityManager->delete($user);
+        }
+        $user = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::MANAGER]);
+        if ($user) {
+            $this->entityManager->delete($user);
+        }
+        $user = $this->entityManager->getRepository(Role::class)->findOneBy(['name' => Role::CUSTOMER]);
+        if ($user) {
+            $this->entityManager->delete($user);
+        }
+        $this->entityManager->sync();
     }
 
 
@@ -47,9 +57,7 @@ readonly class RoleService
     {
         $role = new Role();
         $role->setName($name);
-
-        $this->entityManager->persist($role);
-        $this->entityManager->flush();
+        $this->entityManager->sync($role);
 
         return $role;
     }
@@ -58,9 +66,6 @@ readonly class RoleService
     public function isAdmin(UserInterface $user): bool
     {
         $roles = $user->getRoles();
-        if ($roles->isEmpty()) {
-            return false;
-        }
         foreach ($roles as $role) {
             if ($role instanceof Role) {
                 if ($role->getName() == Role::ADMIN) {
