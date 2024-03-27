@@ -9,8 +9,12 @@ declare(strict_types=1);
 
 namespace App\Core\Components\Catalog\Providers;
 
+use App\Core\Components\Catalog\Model\Form\FormField;
+use BackedEnum;
 use DateTime;
+use Doctrine\ORM\Mapping\MappingException;
 use Exception;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Throwable;
 use ReflectionClass;
 use InvalidArgumentException;
@@ -88,7 +92,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
     }
 
     /**Метод исключения свойств сущности
-     * @return array
+     * @return String[]
      */
     public function exclude_entity_properties(): array
     {
@@ -96,7 +100,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
     }
 
     /**Метод ппереименования свойств сущности
-     * @return array
+     * @return String[]
      */
     public function named_properties(): array
     {
@@ -104,14 +108,25 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
     }
 
     /**Метод исключения свойств сущности из фильтров
-     * @return array
+     * @return String[]
      */
     public function exclude_entity_filters(): array
     {
         return [];
     }
 
+    /**
+     * @return String[]
+     */
     public function exclude_form_elements(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return FormField[]
+     */
+    public function override_form_elements(): array
     {
         return [];
     }
@@ -218,6 +233,8 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 $result[] = (int)$v;
             } elseif ($v instanceof DateTime) {
                 $result[] = date(static::DATE_FORMAT, $v->getTimestamp());
+            } elseif ($v instanceof BackedEnum) {
+                $result[] = $v->value;
             } else {
                 $result[] = gettype($v);
 //                throw new InvalidArgumentException('Unsupported type ' . gettype($v));
@@ -284,6 +301,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
      * @return FormInterface
      * @throws EntityNotFoundException
      * @throws NotSupported
+     * @throws MappingException
      */
     public function build_form(array $args): FormInterface
     {
@@ -298,24 +316,37 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
         $exclude = $this->exclude_form_elements();
 
+        $override = $this->override_form_elements();
+
         foreach ($metadata->getFieldNames() as $fieldName) {
             if (in_array($fieldName, $exclude, true)) {
                 continue;
             }
 
             if (!$metadata->isIdentifier($fieldName)) {
-                $options = ['attr' => ['placeholder' => ucfirst($fieldName)]];
-                $fieldType = TextType::class;
+                if (isset($override[$fieldName]) && $override[$fieldName] instanceof FormField) {
+                    $formField = $override[$fieldName];
+                    $formBuilder->add($formField->fieldName, $formField->fieldType, $formField->options);
+                } else {
+                    $options = ['attr' => ['placeholder' => ucfirst($fieldName)]];
+                    $fieldType = TextType::class;
 
-                if ($metadata->getTypeOfField($fieldName) === 'datetime') {
-                    $fieldType = DateType::class;
-                    $options = [
-                        'data'   => new DateTime(),
-                        'widget' => 'single_text',
-                    ];
+                    if ($metadata->getTypeOfField($fieldName) === 'datetime') {
+                        $fieldType = DateType::class;
+                        $options = [
+                            'data'   => new DateTime(),
+                            'widget' => 'single_text',
+                        ];
+                    }
+
+                    $map = $metadata->getFieldMapping($fieldName);
+                    if (!empty($map['enumType'])) {
+                        $fieldType = EnumType::class;
+                        $options['class'] = $map['enumType'];
+                    }
+
+                    $formBuilder->add($fieldName, $fieldType, $options);
                 }
-
-                $formBuilder->add($fieldName, $fieldType, $options);
             }
         }
 
