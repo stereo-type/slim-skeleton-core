@@ -19,9 +19,9 @@ class Cells extends ArrayCollection
     /**
      * @param  Cell[]  $elements
      */
-    public function __construct(private array $elements = [])
+    public function __construct(array $elements = [])
     {
-        foreach ($this->elements as $element) {
+        foreach ($elements as $element) {
             if (!($element instanceof Cell)) {
                 throw new InvalidArgumentException("Element must be an instance of Row");
             }
@@ -39,7 +39,7 @@ class Cells extends ArrayCollection
             throw new InvalidArgumentException("Element must be an instance of Cell");
         }
 
-        $this->elements[] = $element;
+        parent::add($element);
     }
 
     /**
@@ -47,7 +47,7 @@ class Cells extends ArrayCollection
      */
     public function toArray(): array
     {
-        return $this->elements;
+        return parent::toArray();
     }
 
     public function toMap(): array

@@ -43,7 +43,7 @@ Promise.prototype.aggregate = async function (domElement: HTMLElement | null = n
 
                     (data.trace ?? []).forEach((error: { [x: string]: string; }) => {
                         const errorItem = document.createElement('li');
-                        errorItem.textContent = error['class'] + ' - ' + error['function'] + ' - ' + error['line'];
+                        errorItem.textContent = error['file'] + ' - ' + error['function'] + ' - ' + error['line'];
                         errorList.appendChild(errorItem);
                     });
 

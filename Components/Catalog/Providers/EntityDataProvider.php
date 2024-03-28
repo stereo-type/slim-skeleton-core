@@ -9,12 +9,24 @@ declare(strict_types=1);
 
 namespace App\Core\Components\Catalog\Providers;
 
+use App\Core\Enum\AppEnvironment;
+use App\Core\Services\EntityManagerService;
+use App\Core\Exception\ValidationException;
+use App\Core\Components\Catalog\Enum\FilterType;
+use App\Core\Components\Catalog\Enum\EntityButton;
+use App\Core\Components\Catalog\Model\Table\Row;
 use App\Core\Components\Catalog\Model\Form\FormField;
+use App\Core\Components\Catalog\Model\Filter\TableQueryParams;
+use App\Core\Components\Catalog\Model\Filter\Type\Filter;
+use App\Core\Components\Catalog\Model\Filter\Collections\Filters;
+use App\Core\Components\Catalog\Model\Filter\Collections\FilterComparisons;
+
+use App\Features\System\Enum\PlatformStatus;
 use BackedEnum;
 use DateTime;
-use Doctrine\ORM\Mapping\MappingException;
 use Exception;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use stdClass;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Throwable;
 use ReflectionClass;
 use InvalidArgumentException;
@@ -33,6 +45,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\Common\Collections\Expr\Comparison;
 
 use Symfony\Component\Form\FormInterface;
@@ -43,16 +56,10 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-use App\Core\Enum\AppEnvironment;
-use App\Core\Services\EntityManagerService;
-use App\Core\Exception\ValidationException;
-use App\Core\Components\Catalog\Enum\FilterType;
-use App\Core\Components\Catalog\Enum\EntityButton;
-use App\Core\Components\Catalog\Model\Filter\TableQueryParams;
-use App\Core\Components\Catalog\Model\Filter\Type\Filter;
-use App\Core\Components\Catalog\Model\Filter\Collections\Filters;
-use App\Core\Components\Catalog\Model\Filter\Collections\FilterComparisons;
 
 abstract class EntityDataProvider extends AbstractDataProvider implements CatalogFormInterface
 {
@@ -63,8 +70,23 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
     public const DATE_FORMAT = 'd.m.Y';
 
+    public const ENTITY_REF_LINK_METHOD = 'getName';
+
     protected ReflectionClass $reflection;
 
+    private TranslatorInterface $translator;
+
+    private static array $_properties = ['short' => [], 'all' => []];
+
+
+    /**
+     * @param EntityManager $entityManager
+     * @param FormFactoryInterface $formFactory
+     * @param ContainerInterface $container
+     * @param TableQueryParams|null $params
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __construct(
         EntityManager $entityManager,
         private readonly FormFactoryInterface $formFactory,
@@ -79,6 +101,8 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         }
 
         $this->reflection = new ReflectionClass((string)static::ENTITY_CLASS);
+        $this->translator = $container->get(TranslatorInterface::class);
+
         $entityAttributes = $this->reflection->getAttributes('Doctrine\ORM\Mapping\Entity');
         if (empty($entityAttributes)) {
             throw new InvalidArgumentException('Класс сущности должен иметь аттрибут Doctrine\ORM\Mapping\Entity');
@@ -115,7 +139,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         return [];
     }
 
-    /**
+    /**Метод исключения свойств сущности из формы создания/редактирования
      * @return String[]
      */
     public function exclude_form_elements(): array
@@ -123,27 +147,80 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         return [];
     }
 
-    /**
+    /** Метод переопределения полей формы в дочернем классе.
      * @return FormField[]
+     * @example Например замена инпута селектом
+     * public function override_form_elements(): array
+     * {
+     *      $formFields = [];
+     *      $name = new FormField('name', ChoiceType::class, ['choices' => $this->get_platforms()]);
+     *      $formFields[$name->fieldName] = $name;
+     *      return $formFields;
+     * }
      */
     public function override_form_elements(): array
     {
         return [];
     }
 
-
-    public function get_properties(bool $all = false): array
+    /**Получение имен свойств сущности
+     * @return array
+     */
+    final protected function get_named(): array
     {
-        $head = array_map(static function ($item) {
-            return $item->name;
-        }, $this->reflection->getProperties());
-        $head = array_combine($head, $head);
+        return array_map(static fn($item) => $item->replacedName ?? $item->name, $this->get_properties());
+    }
+
+
+    /**Получение свойств сущности с кешированием
+     * @param bool $all
+     * @return array
+     */
+    final public function get_properties(bool $all = false): array
+    {
+        /**Caches*/
+        if ($all) {
+            if (!empty(self::$_properties['all'])) {
+                return self::$_properties['all'];
+            }
+        } else {
+            if (!empty(self::$_properties['short'])) {
+                return self::$_properties['short'];
+            }
+        }
+
+        $props = $this->reflection->getProperties();
+        $propsNames = array_map(static fn($item) => $item->name, $props);
+        $propsValues = array_map(static function ($item) {
+            $ob = new stdClass();
+            $ob->name = $item->name;
+            $ob->class = $item->class;
+            $ob->isEnum = false;
+            $ob->enumClass = null;
+
+            $attributes = array_map(
+                static fn($attr) => (object)['name' => $attr->getName(), 'arguments' => $attr->getArguments()],
+                $item->getAttributes()
+            );
+
+            foreach ($attributes as $attr) {
+                if (isset($attr->arguments['enumType']) && $attr->arguments['enumType']) {
+                    $ob->isEnum = true;
+                    $ob->enumClass = $attr->arguments['enumType'];
+                }
+            }
+
+            $ob->attributes = $attributes;
+
+            return $ob;
+        }, $props);
+        $head = array_combine($propsNames, $propsValues);
 
         /**Подставновка переопределений имен*/
         $names = $this->named_properties();
         foreach ($head as $k => $v) {
             if (array_key_exists($k, $names)) {
-                $head[$k] = $names[$k];
+                $v->replacedName = $names[$k];
             }
         }
 
@@ -155,13 +232,23 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 }
             }
         }
+
+        if ($all) {
+            self::$_properties['all'] = $head;
+        } else {
+            self::$_properties['short'] = $head;
+        }
+
         return $head;
     }
 
 
+    /**
+     * @return array
+     */
     public function head(): array
     {
-        $head = $this->get_properties();
+        $head = $this->get_named();
         $head[] = 'Управление';
         return $head;
     }
@@ -196,10 +283,31 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
     {
         $filters = [];
         $exclude_filters = $this->exclude_entity_filters();
+        $translator = $this->translator;
         foreach ($this->get_properties() as $key => $prop) {
             if (!in_array($key, $exclude_filters)) {
                 /**TODO сделать поддержку других фильтров*/
-                $filters[] = Filter::create(FilterType::input, $key, ['placeholder' => $prop]);
+                $name = $prop->replacedName ?? $prop->name;
+                if ($prop->isEnum) {
+                    $cases = $prop->enumClass::cases();
+                    $keys = array_map(static fn($i) => $i->value, $cases);
+                    $values = array_map(static function ($v) use ($translator) {
+                        return $v instanceof TranslatableInterface ? $v->trans($translator) : $v->value;
+                    }, $cases);
+                    $options = ['' => $name] + array_combine($keys, $values);
+                    $filters[] = Filter::create(
+                        FilterType::select,
+                        $key,
+                        ['placeholder' => $prop->replacedName ?? $prop->name],
+                        params: ['options' => $options]
+                    );
+                } else {
+                    $filters[] = Filter::create(
+                        FilterType::input,
+                        $key,
+                        ['placeholder' => $name]
+                    );
+                }
             }
         }
 
@@ -214,8 +322,9 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws \Doctrine\Persistence\Mapping\MappingException
      */
-    public function transform_data_row(Twig $twig, array $item): array
+    public function transform_data_row(Twig $twig, array $item): iterable
     {
         $result = [];
         $exclude = $this->exclude_entity_properties();
@@ -234,14 +343,22 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
             } elseif ($v instanceof DateTime) {
                 $result[] = date(static::DATE_FORMAT, $v->getTimestamp());
             } elseif ($v instanceof BackedEnum) {
-                $result[] = $v->value;
+                if ($v instanceof TranslatableInterface) {
+                    $result[] = $v->trans($this->translator);
+                } else {
+                    $result[] = $v->value;
+                }
+            } elseif (is_object($v) && $this->entityManager->getMetadataFactory()->isTransient(get_class($v))) {
+                $method = static::ENTITY_REF_LINK_METHOD;
+                $result[] = $v->$method();
             } else {
                 $result[] = gettype($v);
-//                throw new InvalidArgumentException('Unsupported type ' . gettype($v));
             }
         }
         $result[] = $this->manage_buttons($twig, (int)$item['id']);
-        return $result;
+
+        $row = Row::build($result);
+        return $row->cells;
     }
 
     /**
@@ -266,6 +383,10 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         return $twig->fetch('/catalog/manage_buttons.twig', ['buttons' => $buttons, 'id' => $id]);
     }
 
+    /**
+     * @param FormBuilderInterface $formBuilder
+     * @return void
+     */
     protected function form_actions(FormBuilderInterface $formBuilder): void
     {
         $formBuilder
@@ -294,7 +415,6 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                     ],
             ]);
     }
-
 
     /**
      * @param array $args
@@ -344,11 +464,33 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                         $fieldType = EnumType::class;
                         $options['class'] = $map['enumType'];
                     }
+                    if (isset($map['nullable']) && $map['nullable']) {
+                        $options['required'] = false;
+                    }
 
                     $formBuilder->add($fieldName, $fieldType, $options);
                 }
             }
         }
+
+
+        foreach ($metadata->getAssociationNames() as $fieldName) {
+            if ($metadata->isAssociationWithSingleJoinColumn($fieldName)) {
+                $map = $metadata->getAssociationMapping($fieldName);
+                $targetEntity = $map['targetEntity'];
+                $entities = $this
+                    ->entityManager
+                    ->getRepository($targetEntity)
+                    ->findBy(['status' => PlatformStatus::enable]);
+
+                $method = static::ENTITY_REF_LINK_METHOD;
+                $names = array_map(static fn($e) => $e->$method(), $entities);
+                $choices = array_combine($names, $entities);
+                $options = ['attr' => ['placeholder' => ucfirst($fieldName)], 'choices' => $choices];
+                $formBuilder->add($fieldName, ChoiceType::class, $options);
+            }
+        }
+
 
         $this->form_actions($formBuilder);
         $form = $formBuilder->getForm();
@@ -378,19 +520,34 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         return $form;
     }
 
-
+    /**
+     * @param object $instance
+     * @return void
+     */
     public function before_save(object $instance): void
     {
     }
 
+    /**
+     * @param object $instance
+     * @return void
+     */
     public function after_save(object $instance): void
     {
     }
 
+    /**
+     * @param object $instance
+     * @return void
+     */
     public function before_set(object $instance): void
     {
     }
 
+    /**
+     * @param object $instance
+     * @return void
+     */
     public function after_set(object $instance): void
     {
     }

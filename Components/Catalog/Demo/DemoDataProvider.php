@@ -178,7 +178,7 @@ class DemoDataProvider extends AbstractDataProvider
         return $params->filters->fill_query_builder($qb, $alies, $allowed);
     }
 
-    public function transform_data_row(Twig $twig, array $item): array
+    public function transform_data_row(Twig $twig, array $item): iterable
     {
         $verified = $item['verifiedAt'] instanceof DateTime;
         return [

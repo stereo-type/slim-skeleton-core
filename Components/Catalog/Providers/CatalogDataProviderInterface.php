@@ -27,9 +27,9 @@ interface CatalogDataProviderInterface
 
     public function get_query(TableQueryParams $params): QueryBuilder;
 
-    public function transform_data_row(Twig $twig, array $item): array;
+    public function transform_data_row(Twig $twig, array $item): iterable;
 
-    public function get_table(array $records, TableQueryParams $params): Table;
+    public function get_table(iterable $records, TableQueryParams $params): Table;
 
     public function get_table_data(Twig $twig, TableQueryParams $params): TableData;
 

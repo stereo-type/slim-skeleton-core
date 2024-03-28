@@ -40,7 +40,7 @@ abstract class AbstractDataProvider implements CatalogDataProviderInterface, Cat
         }
     }
 
-    public function get_table(array $records, TableQueryParams $params): Table
+    public function get_table(iterable $records, TableQueryParams $params): Table
     {
         return Table::build($records, $this->head());
     }
@@ -91,9 +91,7 @@ abstract class AbstractDataProvider implements CatalogDataProviderInterface, Cat
             },
             (array)$pagintor->getIterator()
         );
-        return new  TableData(
-            $rows, $params->page, $count, $params->perpage
-        );
+        return new  TableData($rows, $params->page, $count, $params->perpage);
     }
 
 

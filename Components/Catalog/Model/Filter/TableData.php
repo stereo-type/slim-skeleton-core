@@ -15,7 +15,7 @@ readonly class TableData
     public int $totalPage;
 
     public function __construct(
-        public array $records,
+        public iterable $records,
         public int $currentPage,
         public int $totalRecords,
         public int $perPage,

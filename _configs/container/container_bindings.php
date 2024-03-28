@@ -63,6 +63,8 @@ use Symfony\Component\Mime\BodyRendererInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\RateLimiter\Storage\CacheStorage;
 use Symfony\Component\Validator\Validation;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Translation as SyTranslator;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 
@@ -84,7 +86,7 @@ $middleware_file = file_exists(CONFIG_PATH . '/middleware.php')
 $inner_containers = Utils::findFiles(APP_PATH, '_configs', 'container_bindings.php', [__FILE__]);
 $innerBindings = [];
 foreach ($inner_containers as $c) {
-    $innerBindings = array_merge($innerBindings,  require $c);
+    $innerBindings = array_merge($innerBindings, require $c);
 }
 
 $coreBindings = [
@@ -229,7 +231,9 @@ $coreBindings = [
         $registry = new FormRegistry($extensions, $resolvedTypeFactory);
         return new FormFactory($registry);
     },
+    /**TODO убрать один переводчик*/
     Translator::class                       => static fn(Config $config) => new Translator($config->get('_lang')),
+    TranslatorInterface::class              => static fn(Config $config) => new  SyTranslator\Translator('en_En'),
     Purifier::class                         => static fn() => Purifier::build(),
     RequestConvertor::class                 => create(RequestConvertor::class),
 ];
