@@ -520,7 +520,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         return $form;
     }
 
-    /**
+    /**Метод выполняется перед сохранением, может использоваться в качестве кастомного валидатора
      * @param object $instance
      * @return void
      */
@@ -586,6 +586,9 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
             } else {
                 throw new Exception('data must be type ' . static::ENTITY_CLASS);
             }
+        } catch (ValidationException $e) {
+            /**Перепрокидываем наверх*/
+            throw $e;
         } catch (Throwable $e) {
             $message = $e->getMessage();
             if (AppEnvironment::showErrorsDetails($this->container)) {
