@@ -21,12 +21,10 @@ use App\Core\Components\Catalog\Model\Filter\Type\Filter;
 use App\Core\Components\Catalog\Model\Filter\Collections\Filters;
 use App\Core\Components\Catalog\Model\Filter\Collections\FilterComparisons;
 
-use App\Features\System\Enum\PlatformStatus;
 use BackedEnum;
 use DateTime;
 use Exception;
 use stdClass;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Throwable;
 use ReflectionClass;
 use InvalidArgumentException;
@@ -46,6 +44,7 @@ use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\PersistentCollection;
 use Doctrine\Common\Collections\Expr\Comparison;
 
 use Symfony\Component\Form\FormInterface;
@@ -57,6 +56,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -68,9 +68,15 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
     public const ENTITY_ALIES = 'e';
 
+    public const ENTITY_REF_LINK_METHOD = 'getName';
+
+    public const ENTITY_REF_COLLECTION_LINK_METHOD = 'getName';
+
+    public const ENTITY_REF_COLLECTION_LIST = true;
+
     public const DATE_FORMAT = 'd.m.Y';
 
-    public const ENTITY_REF_LINK_METHOD = 'getName';
+    public const FORM_ENTITY_PARAMS_ASSOCIATION = [];
 
     protected ReflectionClass $reflection;
 
@@ -332,6 +338,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
             if (in_array($k, $exclude)) {
                 continue;
             }
+            /**Приметивные типы*/
             if (is_null($v)) {
                 $result[] = $v;
             } elseif (is_string($v)) {
@@ -342,15 +349,35 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 $result[] = (int)$v;
             } elseif ($v instanceof DateTime) {
                 $result[] = date(static::DATE_FORMAT, $v->getTimestamp());
+                /**Enum с возможным TranslatableInterface*/
             } elseif ($v instanceof BackedEnum) {
                 if ($v instanceof TranslatableInterface) {
                     $result[] = $v->trans($this->translator);
                 } else {
                     $result[] = $v->value;
                 }
-            } elseif (is_object($v) && $this->entityManager->getMetadataFactory()->isTransient(get_class($v))) {
+                /**Связь ManyToOne*/
+            } elseif (
+                is_object($v) &&
+                $this->entityManager->getMetadataFactory()->isTransient(get_class($v)) &&
+                (!$v instanceof PersistentCollection) &&
+                method_exists($v, static::ENTITY_REF_LINK_METHOD)
+            ) {
                 $method = static::ENTITY_REF_LINK_METHOD;
                 $result[] = $v->$method();
+                /**Связь OneToMany*/
+            } elseif (
+                is_object($v) &&
+                $this->entityManager->getMetadataFactory()->isTransient(get_class($v)) &&
+                $v instanceof PersistentCollection &&
+                static::ENTITY_REF_COLLECTION_LIST
+            ) {
+                $list = array_map(static function ($e) {
+                    $method = static::ENTITY_REF_COLLECTION_LINK_METHOD;
+                    return '<li>' . $e->$method() . '</li>';
+                }, $v->toArray());
+
+                $result[] = '<ul>' . implode('', $list) . '</ul>';
             } else {
                 $result[] = gettype($v);
             }
@@ -481,7 +508,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 $entities = $this
                     ->entityManager
                     ->getRepository($targetEntity)
-                    ->findBy(['status' => PlatformStatus::enable]);
+                    ->findBy(static::FORM_ENTITY_PARAMS_ASSOCIATION);
 
                 $method = static::ENTITY_REF_LINK_METHOD;
                 $names = array_map(static fn($e) => $e->$method(), $entities);
