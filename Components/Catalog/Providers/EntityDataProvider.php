@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace App\Core\Components\Catalog\Providers;
 
+use App\Core\Components\Catalog\Model\Filter\FilterComparison;
 use App\Core\Enum\AppEnvironment;
 use App\Core\Services\EntityManagerService;
 use App\Core\Exception\ValidationException;
@@ -201,6 +202,8 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
             $ob = new stdClass();
             $ob->name = $item->name;
             $ob->class = $item->class;
+            $ob->manyToOne = false;
+            $ob->manyToOneClass = null;
             $ob->isEnum = false;
             $ob->enumClass = null;
 
@@ -213,6 +216,10 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 if (isset($attr->arguments['enumType']) && $attr->arguments['enumType']) {
                     $ob->isEnum = true;
                     $ob->enumClass = $attr->arguments['enumType'];
+                }
+                if ($attr->name == 'Doctrine\ORM\Mapping\ManyToOne') {
+                    $ob->manyToOne = true;
+                    $ob->manyToOneClass = $attr->arguments['targetEntity'];
                 }
             }
 
@@ -270,12 +277,18 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select(self::ENTITY_ALIES)
             ->from(static::ENTITY_CLASS, self::ENTITY_ALIES);
-
-        $props = array_keys($this->get_properties());
+        $simpleProps = array_keys(array_filter($this->get_properties(), static fn($p) => !$p->manyToOne));
+        $manyToOne = array_filter($this->get_properties(), static fn($p) => $p->manyToOne);
 
         $allowed = FilterComparisons::fromArray(
-            array_combine($props, array_fill(0, count($props), Comparison::CONTAINS))
+            array_combine($simpleProps, array_fill(0, count($simpleProps), Comparison::CONTAINS))
         );
+
+        foreach ($manyToOne as $key => $m) {
+            $allowed[] = new FilterComparison(
+                $key, Comparison::EQ, manyToOne: true, manyToOneClass: $m->manyToOneClass
+            );
+        }
 
         return $params->filters->fill_query_builder($qb, self::ENTITY_ALIES, $allowed);
     }
@@ -305,6 +318,18 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                         FilterType::select,
                         $key,
                         ['placeholder' => $prop->replacedName ?? $prop->name],
+                        params: ['options' => $options]
+                    );
+                } elseif ($prop->manyToOne) {
+                    $list = $this->entityManager->getRepository($prop->manyToOneClass)->findAll();
+                    $method = self::ENTITY_REF_LINK_METHOD;
+                    $keys = array_map(static fn($i) => $i->getId(), $list);
+                    $values = array_map(static fn($i) => $i->$method(), $list);
+                    $options = ['' => $name] + array_combine($keys, $values);
+                    $filters[] = Filter::create(
+                        FilterType::select,
+                        $key,
+                        ['placeholder' => $name],
                         params: ['options' => $options]
                     );
                 } else {

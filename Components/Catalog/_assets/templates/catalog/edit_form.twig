@@ -26,7 +26,9 @@
 
         {% for child in form.children %}
             <div class="mb-3">
-                {{ form_label(child, '', {'label_attr' : {'class' : 'form-label'}}) }}
+                {% if child.vars.block_prefixes[1] not in ['hidden'] %}
+                    {{ form_label(child, '', {'label_attr' : {'class' : 'form-label'}}) }}
+                {% endif %}
 
                 {% set _value = (old[form.vars.name][child.vars.name] is defined) ?
                     old[form.vars.name][child.vars.name] : child.vars.value ?? null %}
