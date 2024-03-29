@@ -33,12 +33,58 @@ function run_entity_action(id: string, action: string, url: string, afterSuccess
     return null;
 }
 
+let formSubmitListener = function (evt: any) {
+};
+
+
 function _show_form_modal(template: ModalTemplate, afterSuccess: callback = null): Promise<SlimModal | null> {
     const modalInstance = modal(template);
+
+
     modalInstance.then((modal) => {
         if (modal instanceof SlimModal) {
             const form = modal.getElement().querySelector('#entity_form') as HTMLFormElement | null;
+
+            modal.getElement().addEventListener('hide.bs.modal', function (evt) {
+                form.removeEventListener('submit', formSubmitListener);
+            });
+
+            let submitting = false;
+            formSubmitListener = async function (evt: any) {
+                form.removeEventListener('submit', formSubmitListener);
+                evt.preventDefault();
+                const data = new FormData(form);
+                showLoader('--form-loader');
+                if (!submitting) {
+                    submitting = true;
+                    try {
+                        let response = await post(template.get_route(), data, form);
+                        /**Если ошибка, то она должна уже быть обработана*/
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result['success']) {
+                                modal.hide();
+                                if (afterSuccess != null) {
+                                    afterSuccess();
+                                }
+                                return modal;
+                                /**AFTER SUCCESS**/
+                            } else {
+                                /**На всякий случай*/
+                                alert('Ошибка сохранения формы');
+                                console.error('Ошибка сохранения формы');
+                            }
+                        }
+
+                    } finally {
+                        dismissLoader('--form-loader');
+                        submitting = false;
+                    }
+                }
+            }
+
             if (form) {
+                form.removeEventListener('submit', formSubmitListener);
                 const buttonClose = form.querySelector('button[type="button"][action="cancel"]');
                 if (buttonClose) {
                     buttonClose.addEventListener('click', function (evt) {
@@ -47,37 +93,7 @@ function _show_form_modal(template: ModalTemplate, afterSuccess: callback = null
                         return modal;
                     })
                 }
-                let submitting = false;
-                form.addEventListener('submit', function (evt) {
-                    evt.preventDefault();
-                    const data = new FormData(form);
-                    showLoader('--form-loader');
-                    if(!submitting) {
-                        submitting = true;
-                        return post(template.get_route(), data, form).then(async response => {
-                            /**Если ошибка, то она должна уже быть обработана*/
-                            if (response.ok) {
-                                const result = await response.json();
-                                if (result['success']) {
-                                    modal.hide();
-                                    if (afterSuccess != null) {
-                                        afterSuccess();
-                                    }
-                                    return modal;
-                                    /**AFTER SUCCESS**/
-                                } else {
-                                    /**На всякий случай*/
-                                    alert('Ошибка сохранения формы');
-                                    console.error('Ошибка сохранения формы');
-                                }
-                            }
-
-                        }).finally(() => {
-                            dismissLoader('--form-loader');
-                            submitting = false;
-                        });
-                    }
-                })
+                form.addEventListener('submit', formSubmitListener);
             }
         }
     });

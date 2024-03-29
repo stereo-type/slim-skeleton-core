@@ -26,7 +26,8 @@
 
         {% for child in form.children %}
             <div class="mb-3">
-                {% if child.vars.block_prefixes[1] not in ['hidden'] %}
+                {% set _hiddenLabel =  child.vars.attr.visibility == 'none' or child.vars.block_prefixes[1] in ['hidden']%}
+                {% if _hiddenLabel != true %}
                     {{ form_label(child, '', {'label_attr' : {'class' : 'form-label'}}) }}
                 {% endif %}
 

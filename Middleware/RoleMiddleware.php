@@ -79,11 +79,8 @@ class RoleMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $container = Container::get_container();
-        $user = $request->getAttributes()['user'] ?? null;
-        /**Если вызов происходит перед вызовом AuthMiddleware дополнительно пытаемся получить*/
-        if (is_null($user)) {
-            $user = $container->get(AuthInterface::class)->user();
-        }
+        $auth = $container->get(AuthInterface::class);
+        $user = $auth->loggedUser();
         if ($user instanceof UserInterface) {
             $roles = $user->getRoles();
             foreach ($roles as $role) {

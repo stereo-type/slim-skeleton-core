@@ -24,6 +24,8 @@ use App\Core\Components\Catalog\Model\Filter\Collections\FilterComparisons;
 
 use BackedEnum;
 use DateTime;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Exception;
 use stdClass;
 use Throwable;
@@ -359,6 +361,8 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
     {
         $result = [];
         $exclude = $this->exclude_entity_properties();
+
+
         foreach ($item as $k => $v) {
             if (in_array($k, $exclude)) {
                 continue;
@@ -383,17 +387,6 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 }
                 /**Связь ManyToOne*/
             } elseif (
-                is_object($v) &&
-                $this->entityManager->getMetadataFactory()->isTransient(get_class($v)) &&
-                (!$v instanceof PersistentCollection) &&
-                method_exists($v, static::ENTITY_REF_LINK_METHOD)
-            ) {
-                $method = static::ENTITY_REF_LINK_METHOD;
-                $result[] = $v->$method();
-                /**Связь OneToMany*/
-            } elseif (
-                is_object($v) &&
-                $this->entityManager->getMetadataFactory()->isTransient(get_class($v)) &&
                 $v instanceof PersistentCollection &&
                 static::ENTITY_REF_COLLECTION_LIST
             ) {
@@ -404,7 +397,34 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
                 $result[] = '<ul>' . implode('', $list) . '</ul>';
             } else {
-                $result[] = gettype($v);
+                if (is_object($v)) {
+                    try {
+                        $meta = $this->entityManager->getClassMetadata(get_class($v));
+                        $allAssociations = $meta->getAssociationMappings();
+                        foreach ($allAssociations as $fieldName => $mapping) {
+                            if (in_array($fieldName, $exclude)) {
+                                continue;
+                            }
+                            if ($mapping['type'] === ClassMetadataInfo::MANY_TO_ONE) {
+                                $list = array_map(static function ($e) {
+                                    $method = static::ENTITY_REF_COLLECTION_LINK_METHOD;
+                                    return '<li>' . $e->$method() . '</li>';
+                                }, $v->toArray());
+
+                                $result[] = '<ul>' . implode('', $list) . '</ul>';
+                                break;
+                            } elseif ($mapping['type'] === ClassMetadataInfo::ONE_TO_MANY) {
+                                $method = static::ENTITY_REF_LINK_METHOD;
+                                $result[] = $v->$method();
+                                break;
+                            }
+                        }
+                    } catch (Throwable $e) {
+                        $result[] = gettype($v);
+                    }
+                } else {
+                    $result[] = gettype($v);
+                }
             }
         }
         $result[] = $this->manage_buttons($twig, (int)$item['id']);
@@ -527,19 +547,24 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
 
         foreach ($metadata->getAssociationNames() as $fieldName) {
-            if ($metadata->isAssociationWithSingleJoinColumn($fieldName)) {
-                $map = $metadata->getAssociationMapping($fieldName);
-                $targetEntity = $map['targetEntity'];
-                $entities = $this
-                    ->entityManager
-                    ->getRepository($targetEntity)
-                    ->findBy(static::FORM_ENTITY_PARAMS_ASSOCIATION);
+            if (isset($override[$fieldName]) && $override[$fieldName] instanceof FormField) {
+                $formField = $override[$fieldName];
+                $formBuilder->add($formField->fieldName, $formField->fieldType, $formField->options);
+            } else {
+                if ($metadata->isAssociationWithSingleJoinColumn($fieldName)) {
+                    $map = $metadata->getAssociationMapping($fieldName);
+                    $targetEntity = $map['targetEntity'];
+                    $entities = $this
+                        ->entityManager
+                        ->getRepository($targetEntity)
+                        ->findBy(static::FORM_ENTITY_PARAMS_ASSOCIATION);
 
-                $method = static::ENTITY_REF_LINK_METHOD;
-                $names = array_map(static fn($e) => $e->$method(), $entities);
-                $choices = array_combine($names, $entities);
-                $options = ['attr' => ['placeholder' => ucfirst($fieldName)], 'choices' => $choices];
-                $formBuilder->add($fieldName, ChoiceType::class, $options);
+                    $method = static::ENTITY_REF_LINK_METHOD;
+                    $names = array_map(static fn($e) => $e->$method(), $entities);
+                    $choices = array_combine($names, $entities);
+                    $options = ['attr' => ['placeholder' => ucfirst($fieldName)], 'choices' => $choices];
+                    $formBuilder->add($fieldName, ChoiceType::class, $options);
+                }
             }
         }
 

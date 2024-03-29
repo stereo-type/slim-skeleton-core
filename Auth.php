@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -10,6 +10,7 @@ use App\Core\Contracts\User\UserInterface;
 use App\Core\Contracts\User\UserProviderServiceInterface;
 use App\Core\DataObjects\RegisterUserData;
 use App\Core\Enum\AuthAttemptStatus;
+use App\Core\Exception\UnAuthorizedException;
 use App\Core\Mail\SignupEmail;
 use App\Core\Mail\TwoFactorAuthEmail;
 use App\Core\Services\UserLoginCodeService;
@@ -37,13 +38,13 @@ class Auth implements AuthInterface
 
         $userId = $this->session->get('user');
 
-        if (! $userId) {
+        if (!$userId) {
             return null;
         }
 
         $user = $this->userProvider->getById($userId);
 
-        if (! $user) {
+        if (!$user) {
             return null;
         }
 
@@ -53,7 +54,7 @@ class Auth implements AuthInterface
     }
 
     /**
-     * @param  array  $credentials
+     * @param array $credentials
      * @return AuthAttemptStatus
      * @throws Exception|TransportExceptionInterface
      */
@@ -61,7 +62,7 @@ class Auth implements AuthInterface
     {
         $user = $this->userProvider->getByCredentials($credentials);
 
-        if (! $user || ! $this->checkCredentials($user, $credentials)) {
+        if (!$user || !$this->checkCredentials($user, $credentials)) {
             return AuthAttemptStatus::FAILED;
         }
 
@@ -104,7 +105,7 @@ class Auth implements AuthInterface
     }
 
     /**
-     * @param  UserInterface  $user
+     * @param UserInterface $user
      * @return void
      */
     public function logIn(UserInterface $user): void
@@ -115,7 +116,7 @@ class Auth implements AuthInterface
     }
 
     /**
-     * @param  UserInterface  $user
+     * @param UserInterface $user
      * @return void
      * @throws TransportExceptionInterface
      * @throws Exception
@@ -131,24 +132,24 @@ class Auth implements AuthInterface
     }
 
     /**
-     * @param  array  $data
+     * @param array $data
      * @return bool
      */
     public function attemptTwoFactorLogin(array $data): bool
     {
         $userId = $this->session->get('2fa');
 
-        if (! $userId) {
+        if (!$userId) {
             return false;
         }
 
         $user = $this->userProvider->getById($userId);
 
-        if (! $user || $user->getEmail() !== $data['email']) {
+        if (!$user || $user->getEmail() !== $data['email']) {
             return false;
         }
 
-        if (! $this->userLoginCodeService->verify($user, $data['code'])) {
+        if (!$this->userLoginCodeService->verify($user, $data['code'])) {
             return false;
         }
 
@@ -159,5 +160,14 @@ class Auth implements AuthInterface
         $this->userLoginCodeService->deactivateAllActiveCodes($user);
 
         return true;
+    }
+
+    public function loggedUser(): UserInterface
+    {
+        $user = $this->user();
+        if (null === $user) {
+            throw new UnAuthorizedException();
+        }
+        return $user;
     }
 }
