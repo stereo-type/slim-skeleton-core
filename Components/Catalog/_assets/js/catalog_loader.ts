@@ -1,0 +1,1 @@
+import "../css/catalog_loader.css";

@@ -13,29 +13,29 @@ use App\Core\Contracts\SessionInterface;
 use App\Core\Enum\ServerStatus;
 use App\Core\Middleware\AuthMiddleware;
 use App\Core\Middleware\EntityFormRequestMiddleware;
-use App\Core\Middleware\RoleMiddleware;
 use App\Core\ResponseFormatter;
 use App\Core\Widgets\PagingBar;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityNotFoundException;
-use Exception;
-use InvalidArgumentException;
+
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\UriInterface;
+use Psr\Http\Server\MiddlewareInterface;
+
 use Slim\App;
 use Slim\Interfaces\RouteGroupInterface;
 use Slim\Routing\RouteCollectorProxy;
 use Slim\Views\Twig;
+
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Doctrine\ORM\EntityManagerInterface;
 
-use function Sodium\add;
-
+use Exception;
+use InvalidArgumentException;
 
 /**Класс для построения контроллеров таблиц без привязки к сущностям (Entity). Релизация:
  ** 1) Создать класс провайдер данных, имплементирующий {@link CatalogDataProviderInterface} и {@link CatalogFilterInterface}.
@@ -100,12 +100,10 @@ abstract class CatalogController
     /**
      * @param App $app
      * @param string|null $route
+     * @param callable[]|MiddlewareInterface[]|string[] $middlewares
      * @return RouteGroupInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws EntityNotFoundException
      */
-    public static function routing(App $app, ?string $route = null): RouteGroupInterface
+    public static function routing(App $app, ?string $route = null, array $middlewares = []): RouteGroupInterface
     {
         $class = static::class;
         $route = $route ?? $class::get_index_route();
@@ -114,11 +112,15 @@ abstract class CatalogController
         }
         $reportName = substr($route, 1);
         $method = 'additional_routes';
-        return $app->group($route, function (RouteCollectorProxy $collectorProxy) use ($class, $reportName, $method) {
+        $group = $app->group($route, function (RouteCollectorProxy $collectorProxy) use ($class, $reportName, $method) {
             $collectorProxy->get('', [$class, 'index'])->setName($reportName);
             $collectorProxy->post('/filter', [$class, 'filter']);
             $class::$method($collectorProxy);
-        })->add(EntityFormRequestMiddleware::class)->add(AuthMiddleware::class);
+        })->add(EntityFormRequestMiddleware::class);
+        foreach ($middlewares as $middleware) {
+            $group->add($middleware);
+        }
+        return $group->add(AuthMiddleware::class);
     }
 
     protected static function additional_routes(RouteCollectorProxy $collectorProxy): void

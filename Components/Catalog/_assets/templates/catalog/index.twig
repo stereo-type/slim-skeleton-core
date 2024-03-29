@@ -6,6 +6,7 @@
     {{ encore_entry_script_tags('catalog_filter') }}
     {{ encore_entry_script_tags('catalog_paginator') }}
     {{ encore_entry_script_tags('catalog_clear') }}
+    {{ encore_entry_script_tags('catalog_loader') }}
     {{ parent() }}
 {% endblock %}
 
@@ -32,6 +33,6 @@
         <div class="--live-catalog-paginbar">
             {{ tablePaginbar | raw }}
         </div>
-        {% include 'catalog/loader.twig' with {class: 'd-none'} %}
+        {% include 'catalog/catalog_loader.twig' with {class: 'd-none', id: '--catalog-loader'} %}
     </div>
 {% endblock %}

@@ -1,15 +1,15 @@
 import * as DOMPurify from "dompurify";
 
-function showLoader(): void {
-    const loader = document.getElementById('--catalog-loader');
+function showLoader(id: string = '--catalog-loader'): void {
+    const loader = document.getElementById(id);
     if (loader) {
         loader.classList.remove('d-none');
         loader.classList.add('d-block');
     }
 }
 
-function dismissLoader(): void {
-    const loader = document.getElementById('--catalog-loader');
+function dismissLoader(id: string = '--catalog-loader'): void {
+    const loader = document.getElementById(id);
     if (loader) {
         loader.classList.remove('d-block');
         loader.classList.add('d-none');
