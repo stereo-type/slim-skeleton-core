@@ -51,7 +51,6 @@ function _show_form_modal(template: ModalTemplate, afterSuccess: callback = null
 
             let submitting = false;
             formSubmitListener = async function (evt: any) {
-                form.removeEventListener('submit', formSubmitListener);
                 evt.preventDefault();
                 const data = new FormData(form);
                 showLoader('--form-loader');
@@ -61,6 +60,7 @@ function _show_form_modal(template: ModalTemplate, afterSuccess: callback = null
                         let response = await post(template.get_route(), data, form);
                         /**Если ошибка, то она должна уже быть обработана*/
                         if (response.ok) {
+                            form.removeEventListener('submit', formSubmitListener);
                             const result = await response.json();
                             if (result['success']) {
                                 modal.hide();

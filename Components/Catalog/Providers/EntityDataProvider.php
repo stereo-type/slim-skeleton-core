@@ -151,7 +151,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
     /**Метод исключения свойств сущности из формы создания/редактирования
      * @return String[]
      */
-    public function exclude_form_elements(): array
+    public function exclude_form_elements(array $args): array
     {
         return [];
     }
@@ -167,7 +167,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
      *      return $formFields;
      * }
      */
-    public function override_form_elements(): array
+    public function override_form_elements(array $args): array
     {
         return [];
     }
@@ -506,9 +506,9 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
         $metadata = $this->entityManager->getClassMetadata(static::ENTITY_CLASS);
 
-        $exclude = $this->exclude_form_elements();
+        $exclude = $this->exclude_form_elements($args);
 
-        $override = $this->override_form_elements();
+        $override = $this->override_form_elements($args);
 
         foreach ($metadata->getFieldNames() as $fieldName) {
             if (in_array($fieldName, $exclude, true)) {

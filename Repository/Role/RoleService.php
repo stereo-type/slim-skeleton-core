@@ -3,6 +3,7 @@
 namespace App\Core\Repository\Role;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
+use App\Core\Contracts\User\AuthInterface;
 use App\Core\Contracts\User\UserInterface;
 use App\Core\Entity\Role;
 use Doctrine\DBAL\Connection;
@@ -11,8 +12,10 @@ use Doctrine\DBAL\Connection;
 readonly class RoleService
 {
 
-    public function __construct(private EntityManagerServiceInterface $entityManager)
-    {
+    public function __construct(
+        private EntityManagerServiceInterface $entityManager,
+        private AuthInterface $authService
+    ) {
     }
 
     /**
@@ -74,6 +77,11 @@ readonly class RoleService
             }
         }
         return false;
+    }
+
+    public function isAdminCurrentUser(): bool
+    {
+        return $this->isAdmin($this->authService->loggedUser());
     }
 
 

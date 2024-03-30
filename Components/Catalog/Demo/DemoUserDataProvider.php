@@ -31,7 +31,7 @@ class DemoUserDataProvider extends EntityDataProvider
         return ['updatedAt', 'createdAt', 'verifiedAt', 'assignments'];
     }
 
-    public function exclude_form_elements(): array
+    public function exclude_form_elements(array $args): array
     {
         return ['twoFactor', 'updatedAt', 'createdAt', 'verifiedAt'];
     }
