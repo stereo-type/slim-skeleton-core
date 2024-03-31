@@ -134,4 +134,16 @@ class User implements UserInterface
         return array_map(static fn(RoleAssignmentInterface $e) => $e->getRole(), $this->assignments->toArray());
     }
 
+    public function isAdmin(): bool
+    {
+        $roles = $this->getRoles();
+        foreach ($roles as $role) {
+            if ($role instanceof Role) {
+                if ($role->getName() == Role::ADMIN) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

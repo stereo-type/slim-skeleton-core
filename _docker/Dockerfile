@@ -1,4 +1,5 @@
 FROM php:8.2-fpm
+MAINTAINER evi_tut@mail.ru
 
 ARG USER
 ARG USER_ID

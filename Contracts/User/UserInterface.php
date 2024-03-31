@@ -18,4 +18,6 @@ interface UserInterface
     public function isTwoFactor(): bool;
 
     public function getRoles(): array;
+
+    public function isAdmin(): bool;
 }

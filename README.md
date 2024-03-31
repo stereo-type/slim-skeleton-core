@@ -122,4 +122,9 @@
    /home/USER/projects/testproject/dockerstorage`
 3. `docker exec -it testproject-app /bin/bash`
 4. `ssh -R 4510:127.0.0.1:9003 -p 5022 USER@192.168.1.101`
+5. `crontab -l` покажет список текущих крон-задач для вашего пользователя.
+6. `crontab -u root -l` # Просмотр существующих заданий (если они есть)
+7. `crontab -u root -e` # Редактирование крон-файла для пользователя root
+8. `ps aux | grep cron` активные процессы крона в системе
+9. `service cron status`/`service cron restart`
 
