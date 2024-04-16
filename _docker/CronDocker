@@ -1,0 +1,7 @@
+FROM renskiy/cron:debian
+COPY cron/cron.d /etc/cron.d
+#Копируем крипт энтрипоинта, который после билда контейнера и монтирования томов со скриптами
+#Поменяет владельца файлов на root
+COPY cron/entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN service cron start

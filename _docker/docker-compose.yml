@@ -16,8 +16,6 @@ services:
       - "host._docker.internal:host-gateway"
     ports:
       - "9003:9003"
-#    networks:
-#      - backend
     volumes:
       - ../../../:/var/www
       - ./local.ini:/usr/local/etc/php/conf.d/local.ini
@@ -57,18 +55,16 @@ services:
       - "6379:6379"
     command: redis-server --requirepass ${REDIS_PASS}
   slim-cron:
+    container_name: "${APP_NAME}-cron"
     build:
       context: ""
-      dockerfile: CronDockerfile
-    container_name: "${APP_NAME}-cron"
-    restart: always
-#    networks:
-#      - backend
+      dockerfile: CronDocker
+    # Чтоб крутился бесконечно
+    command: [ "start-cron", "--user", "www-data", "0 0 * * * echo '00:00 MIDNIGHT'" ]
     volumes:
-      - ../../../:/var/www
+      - ../../../cron:/etc/cron.d
       - ../../../storage/cron:/var/log
-      - ../../../crontab:/etc/cron.d/slim
-
-#networks:
-#  backend:
-#    driver: bridge
+      # Прокидываем сокет докера внутрь чтоб внутри контейнера был доступ к докеру
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: /usr/local/bin/entrypoint.sh
+    restart: always

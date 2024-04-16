@@ -127,4 +127,5 @@
 7. `crontab -u root -e` # Редактирование крон-файла для пользователя root
 8. `ps aux | grep cron` активные процессы крона в системе
 9. `service cron status`/`service cron restart`
+10. `sudo lsof -i :80` проверка порта
 

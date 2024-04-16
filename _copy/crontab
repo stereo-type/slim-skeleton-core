@@ -1,2 +1,4 @@
-* * * * * /usr/bin/php /tasks/test_task.php >> /var/log/cron.log 2>&1
-# Don't remove the empty line at the end of this file. It is required to run the cron job + LF EOF!!
+#  Разместить здесь свои задачи
+
+# Не удалять последнюю пустую строку!!!! Следить за EOF, должен быть LF
+* *         * * *     root   /usr/bin/php /var/www/tasks/test_task.php >> /var/log/cron2.log 2>&1
