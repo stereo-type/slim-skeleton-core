@@ -1,3 +1,0 @@
-#Put you task here
-#Do not remove last EMPTY line AND save LF EOF
-* * * * * root echo "Cron job executed 1min"

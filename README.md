@@ -27,7 +27,7 @@
 2. Добавляем в папку __configs файл config.php. В нем указываются дополнительные конфиги
     ```php
     <?php
-    
+
     declare(strict_types=1);
 
     $def_config = require CORE_CONFIG_PATH.'/core_config.php';
@@ -117,7 +117,7 @@
 
 ### ПОЛЕЗНЫЕ КОМАНДЫ ###
 
-1. `docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(docker images -a -q)`
+1. `docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker system prune -a && docker rmi $(docker images -a -q)`
 2. `cd /home/USER/projects/testproject/docker && docker-compose down && docker-compose up -d --build && chmod -R 777
    /home/USER/projects/testproject/dockerstorage`
 3. `docker exec -it testproject-app /bin/bash`
@@ -128,4 +128,5 @@
 8. `ps aux | grep cron` активные процессы крона в системе
 9. `service cron status`/`service cron restart`
 10. `sudo lsof -i :80` проверка порта
+11. `sudo du -h --max-depth=1 /var/lib | sort -rh` узнать объем папок
 
