@@ -27,12 +27,10 @@ readonly class HomeController
      */
     public function index(Response $response): Response
     {
-//        $startDate             = DateTime::createFromFormat('Y-m-d', date('Y-m-01'));
-//        $endDate               = new DateTime('now');
-
+        /**You need create enter point to Your project*/
         return $this->twig->render(
             $response,
-            'dashboard.twig',
+            'home.twig',
         );
     }
 
