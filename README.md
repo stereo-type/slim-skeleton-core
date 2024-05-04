@@ -6,14 +6,14 @@
 2. В корне проекта создаем папку app
 3. Переходим в папку app, устанaвливаем
    сабмодуль `git submodule add https://github.com/stereo-type/slim-skeleton-core.git Core`
-4. Переходим в папку докера [/app/Core/_docker](/app/Core/_docker). Создаем файл .env, копируем в него
-   содержимое [.env.example](/app/Core/_docker/.env.example) и заполняем данными
-5. Копируем из папки [app/Core/_copy](/app/Core/_copy) все файлы в корень проекта
+4. Копируем из папки [app/Core/_copy](/app/Core/_copy) все файлы в корень проекта
+5. Переходим в папку докера [/_docker](/_docker). Создаем файл .env, копируем в него
+   содержимое [.env.example](/_docker/.env.example) и заполняем данными
 6. В корне проекта создаем файл .env и копируем в него содержимое [.env.example](/.env.example)
 7. Заполняем файл окружения необходимыми параметрами
 8. В корне основного проекта создаем папки storage,public,migrations
 
-9. Запускаем контейнеры командой `docker-compose up -d` из папки [/app/Core/_docker](/app/Core/_docker)
+9. Запускаем контейнеры командой `docker-compose up -d` из папки [/_docker](/_docker)
 10. Входим в контейнер командой `docker exec -it slim-skeleton-app bash`. Дальнейшие команды будем выполнять из
     контейнера
 11. Устанавливаем зависимости PHP командой `composer install`
