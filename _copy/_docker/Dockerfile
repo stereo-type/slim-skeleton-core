@@ -28,15 +28,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN docker-php-ext-configure intl
 RUN docker-php-ext-install pdo pdo_mysql intl
-RUN #docker-php-ext-install bcmath gmp
 
 RUN pecl install xdebug \
     && pecl install redis \
     && docker-php-ext-enable xdebug \
     && docker-php-ext-enable redis
-
-RUN pecl install trader \
-#    && docker-php-ext-enable trader
 
 COPY xdebug.ini "${PHP_INI_DIR}/conf.d"
 
