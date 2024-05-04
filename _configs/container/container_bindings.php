@@ -160,16 +160,6 @@ $coreBindings = [
         static fn(ContainerInterface $container) => $container->get(Auth::class),
     UserProviderServiceInterface::class     =>
         static fn(ContainerInterface $container) => $container->get(UserProviderRepository::class),
-    SessionInterface::class                 =>
-        static fn(Config $config) => new Session(
-            new SessionConfig(
-                $config->get('session.name', ''),
-                $config->get('session.flash_name', 'flash'),
-                $config->get('session.secure', true),
-                $config->get('session.httponly', true),
-                SameSite::from($config->get('session.samesite', 'lax'))
-            )
-        ),
     RequestValidatorFactoryInterface::class =>
         static fn(ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
     'csrf'                                  =>
@@ -192,6 +182,17 @@ $coreBindings = [
         },
     EntityManagerServiceInterface::class    =>
         static fn(EntityManagerInterface $entityManager) => new EntityManagerService($entityManager),
+    SessionInterface::class                 =>
+        static fn(Config $config, ContainerInterface $container) => new Session(
+            new SessionConfig(
+                $config->get('session.name', ''),
+                $config->get('session.flash_name', 'flash'),
+                $config->get('session.secure', true),
+                $config->get('session.httponly', true),
+                SameSite::from($config->get('session.samesite', 'lax'))
+            ),
+            $container->get(EntityManagerServiceInterface::class)
+        ),
     MailerInterface::class                  =>
         static function (Config $config) {
             if ($config->get('mailer.driver') === 'log') {

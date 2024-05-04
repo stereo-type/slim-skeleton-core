@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Core\Contracts;
 
+use App\Core\Entity\User;
+
 interface SessionInterface
 {
     public function start(): void;
@@ -25,4 +27,6 @@ interface SessionInterface
     public function flash(string $key, array $messages): void;
 
     public function getFlash(string $key): array;
+
+    public function getUser(): ?User;
 }

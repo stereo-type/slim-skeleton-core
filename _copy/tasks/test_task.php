@@ -6,5 +6,5 @@
  */
 
 declare(strict_types=1);
-$d = date('dm..y H:i:s', time());
-echo $d . "  - test_task.php - " . " test<br>\n\r";
+$d = date('d.m.Y H:i:s');
+echo $d . "  - test_task.php - " . " test\n\r";

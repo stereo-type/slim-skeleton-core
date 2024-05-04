@@ -1,16 +1,19 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Contracts\SessionInterface;
+use App\Core\Contracts\User\UserInterface;
 use App\Core\DataObjects\SessionConfig;
 use App\Core\Exception\SessionException;
+use App\Core\Entity\User;
 
 readonly class Session implements SessionInterface
 {
-    public function __construct(private SessionConfig $options)
+    public function __construct(private SessionConfig $options, private EntityManagerServiceInterface $em)
     {
     }
 
@@ -32,11 +35,11 @@ readonly class Session implements SessionInterface
             ]
         );
 
-        if (! empty($this->options->name)) {
+        if (!empty($this->options->name)) {
             session_name($this->options->name);
         }
 
-        if (! session_start()) {
+        if (!session_start()) {
             throw new SessionException('Unable to start the session');
         }
     }
@@ -88,5 +91,14 @@ readonly class Session implements SessionInterface
         unset($_SESSION[$this->options->flashName][$key]);
 
         return $messages;
+    }
+
+    public function getUser(): ?User
+    {
+        $userid = $this->get('user');
+        if ($userid) {
+            return $this->em->get(User::class, $userid);
+        }
+        return null;
     }
 }

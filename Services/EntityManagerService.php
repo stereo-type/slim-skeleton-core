@@ -7,6 +7,7 @@ namespace App\Core\Services;
 use BadMethodCallException;
 use App\Core\Contracts\EntityManagerServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
 
 /**
  * @mixin EntityManagerInterface
@@ -23,7 +24,7 @@ readonly class EntityManagerService implements EntityManagerServiceInterface
             return call_user_func_array([$this->entityManager, $name], $arguments);
         }
 
-        throw new BadMethodCallException('Call to undefined method "'.$name.'"');
+        throw new BadMethodCallException('Call to undefined method "' . $name . '"');
     }
 
     public function sync(?object $entity = null): void
@@ -63,5 +64,20 @@ readonly class EntityManagerService implements EntityManagerServiceInterface
     public function enableUserAuthFilter(int $userId): void
     {
         $this->getFilters()->enable('user')->setParameter('user_id', $userId);
+    }
+
+    /**
+     * @param string $className
+     * @param $id
+     * @return mixed
+     * @throws EntityNotFoundException
+     */
+    public function get(string $className, $id): mixed
+    {
+        $instance = $this->entityManager->find($className, $id);
+        if ($instance) {
+            return $instance;
+        }
+        throw new EntityNotFoundException('Class "' . $className . '" instance with id "' . $id . '" not found');
     }
 }

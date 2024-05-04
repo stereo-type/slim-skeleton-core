@@ -18,9 +18,9 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ../../../:/var/www
+      - ../:/var/www
       - ./local.ini:/usr/local/etc/php/conf.d/local.ini
-      - ../../../storage/php-fpm:/var/log/php-fpm
+      - ../storage/php-fpm:/var/log/php-fpm
     depends_on:
       - slim-nginx
       - slim-db
@@ -31,14 +31,14 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ../../../:/var/www
+      - ../:/var/www
       - ./nginx:/etc/nginx/conf.d
-      - ../../../storage/nginx:/var/log/nginx
+      - ../storage/nginx:/var/log/nginx
   slim-db:
     container_name: "${APP_NAME}-db"
     image: mysql:8.0
     volumes:
-      - ../../../storage/mysql:/var/lib/mysql
+      - ../storage/mysql:/var/lib/mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: '${DB_PASS}'
@@ -75,9 +75,9 @@ services:
     restart: always
     working_dir: /var/www/
     volumes:
-      - ../../../:/var/www
-      - ../../../cron/crontab:/etc/cron.d/crontab
-      - ../../../storage/cron:/var/log/cron
+      - ../:/var/www
+      - ../cron/crontab:/etc/cron.d/crontab
+      - ../storage/cron:/var/log/cron
     depends_on:
       - slim-nginx
       - slim-db

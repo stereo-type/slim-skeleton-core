@@ -28,18 +28,21 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN docker-php-ext-configure intl
 RUN docker-php-ext-install pdo pdo_mysql intl
-RUN docker-php-ext-install gmp
+RUN #docker-php-ext-install bcmath gmp
 
 RUN pecl install xdebug \
     && pecl install redis \
     && docker-php-ext-enable xdebug \
     && docker-php-ext-enable redis
 
+RUN pecl install trader \
+#    && docker-php-ext-enable trader
+
 COPY xdebug.ini "${PHP_INI_DIR}/conf.d"
 
-#RUN groupadd --force -g $GROUP_ID $USER
-#RUN useradd -ms /bin/bash --no-user-group -g $GROUP_ID -u 1337 $USER
-#RUN usermod -u $USER_ID $USER
+RUN groupadd --force -g $GROUP_ID $USER
+RUN useradd -ms /bin/bash --no-user-group -g $GROUP_ID -u 1337 $USER
+RUN usermod -u $USER_ID $USER
 
 # SSH
 RUN apt-get install -y openssh-server
@@ -53,24 +56,25 @@ RUN apt-get install -y sudo \
 # Supervisor
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY start.sh /start.sh
+RUN sed -i "s/\$_USER/$USER/g" /etc/supervisor/supervisord.conf
 
-#CMD /bin/bash -c "envsubst < /etc/supervisor/supervisord.conf.template > /etc/supervisor/supervisord.conf && supervisord -n -c /etc/supervisor/supervisord.conf"
+# Создаем файлы логов
+RUN mkdir -p /var/www/cron \
+    && touch /var/www/cron/cron.log \
+    && chown $USER:$USER /var/www/cron/cron.log \
+    && touch /var/run/crond.pid \
+    && chown $USER:$USER /var/run/crond.pid
 
-# Set up cron log file and PID file
-#RUN touch /var/run/crond.pid \
-#    && chown $USER:$USER /var/run/crond.pid
-#
-#mkdir -p /var/www/cron \
-#    && touch /var/www/cron/cron.log \
-#    && chown $USER:$USER /var/www/cron/cron.log \
-#    && touch /var/run/crond.pid \
-#    && chown $USER:$USER /var/run/crond.pid \
+RUN mkdir /var/log/cron -p /var/log/php-fpm -p \
+    && touch /var/log/xdebug.log /var/log/cron/out.log /var/log/php-fpm/out.log /var/log/cron/error.log /var/log/php-fpm/error.log \
+    && chmod 777 /var/log/xdebug.log /var/log/cron/out.log /var/log/cron/error.log /var/log/php-fpm/out.log /var/log/php-fpm/error.log
 
 # Allow user to run crontab
 RUN echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/cron" >> /etc/sudoers
 RUN echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/service cron restart" >> /etc/sudoers
 RUN echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/service cron status" >> /etc/sudoers
-
+RUN chmod gu+rw /var/run \
+   && chmod gu+s /usr/sbin/cron
 
 USER $USER
 
