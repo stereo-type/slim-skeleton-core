@@ -2,24 +2,23 @@
 
 declare(strict_types=1);
 
-use App\Core\Utils;
-use Slim\App;
-use Slim\Routing\RouteCollectorProxy;
-
-use App\Core\Controllers\ModalController;
 use App\Core\Controllers\AuthController;
 use App\Core\Controllers\HomeController;
+use App\Core\Controllers\ModalController;
 use App\Core\Controllers\PasswordResetController;
 use App\Core\Controllers\ProfileController;
 use App\Core\Controllers\VerifyController;
+use App\Core\Lib\Files;
 use App\Core\Middleware\AuthMiddleware;
 use App\Core\Middleware\GuestMiddleware;
 use App\Core\Middleware\RateLimitMiddleware;
 use App\Core\Middleware\ValidateSignatureMiddleware;
 use App\Core\Middleware\VerifyEmailMiddleware;
+use Slim\App;
+use Slim\Routing\RouteCollectorProxy;
 
 return static function (App $app) {
-    $inner_routes = Utils::findFiles(APP_PATH, '_configs', 'routes.php', [__FILE__]);
+    $inner_routes = Files::findFiles(APP_PATH, '_configs', 'routes.php', [__FILE__]);
 
     $app->group('', function (RouteCollectorProxy $group) {
         $group->get('/', [HomeController::class, 'index'])->setName('home');

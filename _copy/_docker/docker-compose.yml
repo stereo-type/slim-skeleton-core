@@ -14,15 +14,15 @@ services:
     restart: always
     working_dir: /var/www/
     extra_hosts:
-      - "host._docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     ports:
       - "9000:9000"
+      - "5022:22"
     volumes:
       - ../:/var/www
       - ./local.ini:/usr/local/etc/php/conf.d/local.ini
       - ../storage/php-fpm:/var/log/php-fpm
     depends_on:
-      - slim-nginx
       - slim-db
   slim-nginx:
     image: nginx:1.19-alpine
@@ -34,6 +34,8 @@ services:
       - ../:/var/www
       - ./nginx:/etc/nginx/conf.d
       - ../storage/nginx:/var/log/nginx
+    depends_on:
+      - slim-app
   slim-db:
     container_name: "${APP_NAME}-db"
     image: mysql:8.0

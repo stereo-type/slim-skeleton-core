@@ -9,18 +9,19 @@ declare(strict_types=1);
 
 namespace App\Core\_configs\builder\twig;
 
+use App\Core\Config;
+use App\Core\Enum\AppEnvironment;
+use App\Core\Lib\Files;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-
 use ReflectionClass;
 use Slim\Views\Twig;
-
+use Symfony\Bridge\Twig\AppVariable;
 use Symfony\Bridge\Twig\Extension\AssetExtension;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
-use Symfony\Bridge\Twig\AppVariable;
 use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
@@ -30,10 +31,6 @@ use Twig\Error\LoaderError;
 use Twig\Extension\DebugExtension;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\RuntimeLoader\FactoryRuntimeLoader;
-
-use App\Core\Utils;
-use App\Core\Config;
-use App\Core\Enum\AppEnvironment;
 
 
 readonly class Builder
@@ -59,7 +56,7 @@ readonly class Builder
         $paths = [VIEW_PATH, $vendorTwigBridgeDirectory.'/Resources/views/Form'];
 //            $t = microtime(true);
         //TODO навалить кешей для прода 0.001 секунды для 40 папок
-        foreach (Utils::getPathsRecursively(APP_PATH, 'templates') as $p) {
+        foreach (Files::getPathsRecursively(APP_PATH, 'templates') as $p) {
             if (!in_array($p, $paths, true)) {
                 $paths[] = $p;
             }
@@ -81,6 +78,7 @@ readonly class Builder
         $twig->addExtension(new AssetExtension($container->get('webpack_encore.packages')));
         $twig->addExtension(new FormExtension());
         $twig->addExtension(new StimulusExtension());
+        $twig->addExtension(new IntentExtension());
         $twig->addExtension(new DebugExtension());
         $formEngine = new TwigRendererEngine(
             $config->get('twig.default_form_theme', ['form_div_layout.html.twig']), $twig->getEnvironment()

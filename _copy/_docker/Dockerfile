@@ -19,6 +19,8 @@ RUN apt-get update &&  \
     supervisor \
     cron \
     libgmp-dev \
+    net-tools\
+    telnet \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash \

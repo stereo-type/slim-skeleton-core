@@ -16,6 +16,7 @@ use App\Core\DataObjects\SessionConfig;
 use App\Core\Enum\SameSite;
 use App\Core\Enum\StorageDriver;
 use App\Core\Filters\UserFilter;
+use App\Core\Lib\Files;
 use App\Core\Repository\User\UserProviderRepository;
 use App\Core\RequestValidators\RequestValidatorFactory;
 use App\Core\RouteEntityBindingStrategy;
@@ -24,7 +25,6 @@ use App\Core\Services\Purifier;
 use App\Core\Services\RequestConvertor;
 use App\Core\Services\Translator;
 use App\Core\Session;
-use App\Core\Utils;
 use Clockwork\Clockwork;
 use Clockwork\DataSource\DoctrineDataSource;
 use Clockwork\Storage\FileStorage;
@@ -62,9 +62,9 @@ use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\BodyRendererInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\RateLimiter\Storage\CacheStorage;
+use Symfony\Component\Translation as SyTranslator;
 use Symfony\Component\Validator\Validation;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Translation as SyTranslator;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 
@@ -83,11 +83,7 @@ $middleware_file = file_exists(CONFIG_PATH . '/middleware.php')
     ? CONFIG_PATH . '/middleware.php' : CORE_CONFIG_PATH . '/middleware.php';
 
 
-$inner_containers = Utils::findFiles(APP_PATH, '_configs', 'container_bindings.php', [__FILE__]);
-$innerBindings = [];
-foreach ($inner_containers as $c) {
-    $innerBindings = array_merge($innerBindings, require $c);
-}
+$innerBindings = Files::listFromFiles(APP_PATH, '_configs', 'container_bindings.php', [__FILE__]);
 
 $coreBindings = [
     App::class                              =>
@@ -111,7 +107,7 @@ $coreBindings = [
         static function (Config $config) {
             $paths = $config->get('doctrine.entity_dir');
             //TODO навалить кешей для прода 0.001 секунды для 40 папок
-            foreach (Utils::getPathsRecursively(APP_PATH, 'entity') as $p) {
+            foreach (Files::getPathsRecursively(APP_PATH, 'entity') as $p) {
                 if (!in_array($p, $paths, true)) {
                     $paths[] = $p;
                 }
@@ -208,7 +204,7 @@ $coreBindings = [
     ),
     RedisAdapter::class                     =>
         static function (Config $config) {
-            $redis = new Redis();
+            $redis = new \Redis();
             $config = $config->get('redis');
             $redis->connect($config['host'], (int)$config['port']);
             if ($config['password']) {
