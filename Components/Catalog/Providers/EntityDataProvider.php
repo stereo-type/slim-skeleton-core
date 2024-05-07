@@ -510,6 +510,8 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
         $override = $this->override_form_elements($args);
 
+        $names = $this->named_properties();
+
         foreach ($metadata->getFieldNames() as $fieldName) {
             if (in_array($fieldName, $exclude, true)) {
                 continue;
@@ -520,7 +522,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                     $formField = $override[$fieldName];
                     $formBuilder->add($formField->fieldName, $formField->fieldType, $formField->options);
                 } else {
-                    $options = ['attr' => ['placeholder' => ucfirst($fieldName)]];
+                    $options = ['attr' => []];
                     $fieldType = TextType::class;
 
                     if ($metadata->getTypeOfField($fieldName) === 'datetime') {
@@ -538,6 +540,12 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                     }
                     if (isset($map['nullable']) && $map['nullable']) {
                         $options['required'] = false;
+                    }
+                    if (isset($names[$fieldName])) {
+                        $options['label'] = $names[$fieldName];
+                        $options['attr']['placeholder'] = $names[$fieldName];
+                    } else {
+                        $options['attr']['placeholder'] = ucfirst($fieldName);
                     }
 
                     $formBuilder->add($fieldName, $fieldType, $options);

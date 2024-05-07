@@ -60,8 +60,8 @@ abstract class EntityCatalogController extends CatalogController
                     $params
                 );
                 $implements = class_implements($provider);
-                if (!in_array(CatalogDataProviderInterface::class, $implements) ||
-                    !in_array(CatalogFilterInterface::class, $implements)) {
+                if (!in_array(CatalogDataProviderInterface::class, $implements, true) ||
+                    !in_array(CatalogFilterInterface::class, $implements, true)) {
                     throw new InvalidArgumentException(
                         "Class $className must implements CatalogDataProviderInterface && CatalogFilterInterface"
                     );
@@ -117,16 +117,16 @@ abstract class EntityCatalogController extends CatalogController
                     );
                 }
 
-                return $response->withHeader('Location', $this->get_index_route())->withStatus(
+                return $response->withHeader('Location', static::get_index_route())->withStatus(
                     ServerStatus::CREATED->value
                 );
-            } else {
-                $errors = [];
-                foreach ($form->getErrors(true) as $e) {
-                    $errors [$e->getOrigin()->getName()] = $e->getMessage();
-                }
-                throw new ValidationException($errors);
             }
+
+            $errors = [];
+            foreach ($form->getErrors(true) as $e) {
+                $errors [$e->getOrigin()->getName()] = $e->getMessage();
+            }
+            throw new ValidationException($errors);
         }
 
         $template = $this->requestService->isAjax($request) ? static::FORM_TEMPLATE_AJAX : static::FORM_TEMPLATE;
@@ -176,7 +176,7 @@ abstract class EntityCatalogController extends CatalogController
             );
         }
 
-        return $response->withHeader('Location', $this->get_index_route())->withStatus(ServerStatus::ACCEPTED->value);
+        return $response->withHeader('Location', static::get_index_route())->withStatus(ServerStatus::ACCEPTED->value);
     }
 
 

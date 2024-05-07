@@ -11,93 +11,69 @@
 {% block title %}{{ translate('administrating') }}{% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-3">
-                <h4>{{ translate('administrating') }}</h4>
-            </div>
-            <div class="col-sm-9">
-                <ul class="list-unstyled">
-                </ul>
+    <header id="page-header" class="header-maxwidth d-print-none">
+        <div class="w-100" id="yui_3_17_2_1_1715025578563_35">
+            <div class="d-flex flex-wrap">
+                <h1 class="h2">{{ header }}</h1>
             </div>
         </div>
-        <hr>
-        <div class="row">
-            <div class="col-sm-3">
-                <h4><a href="#">Пользователи</a></h4>
-            </div>
-            <div class="col-sm-9">
-                <ul class="list-unstyled">
-                    <li><a href="https://ms.sdo.support/local/webinar/pages/webinar_graph.php">График вебинаров</a></li>
-                    <li><a href="https://ms.sdo.support/local/webinar/pages/webinar_webinar.php">Вебинары</a></li>
-                    <li><a href="https://ms.sdo.support/local/webinar/pages/webinar_series.php">Серии вебинаров</a></li>
-                    <li><a href="https://ms.sdo.support/local/webinar/pages/webinar_place.php">Места проведения вебинаров</a></li>
-                    <li><a href="https://ms.sdo.support/local/webinar/pages/webinar_type.php">Типы вебинаров</a></li>
-                    <li><a href="https://ms.sdo.support/local/webinar/pages/webinar_group.php">Группа вебинаров</a></li>
-                    <li><a href="https://ms.sdo.support/local/webinar/pages/webinar_author.php">Aвторы вебинаров</a></li>
-                </ul>
-            </div>
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col-sm-3">
-                <h4><a href="#">Мобильное приложение</a></h4>
+    </header>
 
-            </div>
-            <div class="col-sm-9">
-                <ul class="list-unstyled">
-                    <li><a href="https://ms.sdo.support/admin/category.php?category=program_gallery">Продающее приложение</a></li>
-                    <li>
-                        <ul class="list-unstyled ml-2">
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/category.php">Категории галлереи программ</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/gallery.php">Галлерея программ</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/faq.php">FAQ для галлереи программ</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/oferta.php">Оферта</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/sticker.php">Стикеры</a></li>
-                            <li><a href="https://ms.sdo.support/admin/settings.php?section=program_gallery_recommendation_config">Настройки рекомендаций</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/recommended.php">Рекомендации пользователей</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/favorite.php">Просмотр избранных</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/manage_category.php">Управление настройками видимости категорий</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/program_subs.php">Отчет количеству пользователей, зачисленных на программы</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/program_relation.php">Отчет взаимосвязям программ у пользователей</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/gallery/program_watches.php">Отчет по просмотру пользователями программ</a></li>
-                        </ul>
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">
+                {% if backButton %}
+                    <li class="nav-item" role="presentation">
+                        <a href="{{ backButton.url }}" class="nav-link"
+                           tabindex="-1">{{ backButton.text }}</a>
                     </li>
-                    <li><a href="https://ms.sdo.support/admin/category.php?category=mobile_review">Отзывы</a></li>
-                    <li>
-                        <ul class="list-unstyled ml-2">
-                            <li><a href="https://ms.sdo.support/local/mobile_app/review/settings.php">Настройки отзывов в мобильном приложении</a></li>
-                        </ul>
+                {% endif %}
+                {% for category in categories %}
+                    {% set isActive = (current_category == category.name) %}
+                    <li class="nav-item" role="presentation">
+                        <a href="#tabs-{{ category.name }}" class="nav-link {% if isActive %}active{% endif %}"
+                           data-bs-toggle="tab" aria-selected="false" role="tab"
+                           tabindex="-1">{{ category.visibleName }}</a>
                     </li>
-                    <li><a href="https://ms.sdo.support/admin/category.php?category=mobile_quiz">Опросы</a></li>
-                    <li>
-                        <ul class="list-unstyled ml-2">
-                            <li><a href="https://ms.sdo.support/local/mobile_app/quiz/quiz.php">Опросы</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/quiz/question.php">Вопросы</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/quiz/variant.php">Варианты</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/quiz/answer.php">Ответы пользователей</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="https://ms.sdo.support/admin/category.php?category=mobile_push">Пуш уведомления</a></li>
-                    <li>
-                        <ul class="list-unstyled ml-2">
-                            <li><a href="https://ms.sdo.support/local/mobile_app/push/manage.php">Управление уведомлениями</a></li>
-                            <li><a href="https://ms.sdo.support/local/mobile_app/push/test.php">Отправка тестового уведомления</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="https://ms.sdo.support/admin/category.php?category=mobile_popup">Управление pop-up</a></li>
-                    <li>
-                        <ul class="list-unstyled ml-2">
-                            <li><a href="https://ms.sdo.support/local/mobile_app/popup/manage.php">Создать pop-up</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="https://ms.sdo.support/admin/category.php?category=mobile_banner">Управление банерами</a></li>
-                    <li>
-                        <ul class="list-unstyled ml-2">
-                            <li><a href="https://ms.sdo.support/local/mobile_app/banner/manage.php">Создать баннер</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                {% for category in categories %}
+                    {% set isActive = (current_category == category.name) %}
+                    <div class="tab-pane {% if isActive %}active{% endif %}" id="tabs-{{ category.name }}"
+                         role="tabpanel">
+                        <h4>{{ category.visibleName }}</h4>
+                        <div class="row">
+                            {% for child in category.children %}
+                                <div class="col-sm-3">
+                                    <h4><a href="{{ child.get_settings_page_url() }}">{{ child.visibleName }}</a>
+                                    </h4>
+                                </div>
+                                <div class="col-sm-9">
+                                    <ul class="list-unstyled">
+                                        {% macro renderCategory(child, level = 0) %}
+                                            {% for subchild in child.children %}
+                                                <li style="margin-left: {{ level * 20 }}px;"><a href="{{ subchild.get_settings_page_url() }}">
+                                                        {% if subchild.is_category|default(false) %}
+                                                            <strong>{{ subchild.visibleName }}</strong>
+                                                        {% else %}
+                                                            {{ subchild.visibleName }}
+                                                        {% endif %}
+                                                    </a></li>
+                                                {% if subchild.children is not empty %}
+                                                    {{ _self.renderCategory(subchild, level + 1) }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endmacro %}
+                                        {{ _self.renderCategory(child) }}
+                                    </ul>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

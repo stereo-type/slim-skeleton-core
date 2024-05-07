@@ -2,27 +2,20 @@
 
 declare(strict_types = 1);
 
-use App\Core\Controllers\AdminController;
-use App\Core\Controllers\ModalController;
-use App\Core\Middleware\RoleMiddleware;
+use App\Core\Components\Admin\Controllers\AdminController;
+use App\Core\Controllers\UserCatalogController;
+use App\Core\Middleware\AuthMiddleware;
+use App\Core\Middleware\VerifyEmailMiddleware;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
-use App\Core\Controllers\AuthController;
-use App\Core\Controllers\HomeController;
-use App\Core\Controllers\PasswordResetController;
-use App\Core\Controllers\ProfileController;
-use App\Core\Controllers\VerifyController;
-use App\Core\Middleware\AuthMiddleware;
-use App\Core\Middleware\GuestMiddleware;
-use App\Core\Middleware\RateLimitMiddleware;
-use App\Core\Middleware\ValidateSignatureMiddleware;
-use App\Core\Middleware\VerifyEmailMiddleware;
 
 return static function (App $app) {
 
 
-    $app->group('/admin', function (RouteCollectorProxy $group) {
+    $app->group('/admin', function (RouteCollectorProxy $group) use ($app) {
         $group->get('', [AdminController::class, 'index'])->setName('admin');
+//        $group->get('/tes', [AdminController::class, 'tes'])->setName('tes');
+        UserCatalogController::routing($app, '/admin/user');
     })->add(VerifyEmailMiddleware::class)
 //        ->add(RoleMiddleware::admin())
         ->add(AuthMiddleware::class);

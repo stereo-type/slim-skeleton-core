@@ -86,8 +86,8 @@ abstract class CatalogController
             static::class => static function (ContainerInterface $container) use ($className, $params) {
                 $provider = new $className($container->get(EntityManagerInterface::class), $container, $params);
                 $implements = class_implements($provider);
-                if (!in_array(CatalogDataProviderInterface::class, $implements) ||
-                    !in_array(CatalogFilterInterface::class, $implements)) {
+                if (!in_array(CatalogDataProviderInterface::class, $implements, true) ||
+                    !in_array(CatalogFilterInterface::class, $implements, true)) {
                     throw new InvalidArgumentException(
                         "Class $className must implements CatalogDataProviderInterface && CatalogFilterInterface"
                     );
@@ -107,15 +107,14 @@ abstract class CatalogController
     {
         $class = static::class;
         $route = $route ?? $class::get_index_route();
-        if (stripos($route, '/') !== 0) {
+        if (!str_starts_with($route, '/')) {
             $route = '/' . $route;
         }
         $reportName = substr($route, 1);
-        $method = 'additional_routes';
-        $group = $app->group($route, function (RouteCollectorProxy $collectorProxy) use ($class, $reportName, $method) {
+        $group = $app->group($route, function (RouteCollectorProxy $collectorProxy) use ($class, $reportName) {
             $collectorProxy->get('', [$class, 'index'])->setName($reportName);
             $collectorProxy->post('/filter', [$class, 'filter']);
-            $class::$method($collectorProxy);
+            $class::additional_routes($collectorProxy);
         })->add(EntityFormRequestMiddleware::class);
         foreach ($middlewares as $middleware) {
             $group->add($middleware);
@@ -165,7 +164,7 @@ abstract class CatalogController
         /**ClearCache*/
         if (!empty($data['clearCache']) && (bool)$data['clearCache']) {
             $this->_clear_filters_from_cache();
-            return $response->withHeader('Location', $this->get_index_route())->withStatus(
+            return $response->withHeader('Location', static::get_index_route())->withStatus(
                 ServerStatus::REDIRECT->value
             );
         }
@@ -181,7 +180,7 @@ abstract class CatalogController
             static::TABLE_TEMPLATE,
             [
                 'id'                => $this->get_catalog_id(),
-                'requestIndexRoute' => $this->get_index_route(),
+                'requestIndexRoute' => static::get_index_route(),
                 'tableHeading'      => $this->get_name(),
                 'filtersCatalog'    => $filters->render(),
                 'tableContent'      => $content['table']->render(),
@@ -214,7 +213,7 @@ abstract class CatalogController
         $filter_changed = !empty($filter_diff);
         if ($filter_changed) {
             /**Если изменена не только страница, а какие то фильтра, то необходимо сбросить страницу на 0*/
-            if (!(count($filter_diff) === 1 && isset($filter_diff['page'])) && !empty($cached_filters)) {
+            if (!empty($cached_filters) && !(count($filter_diff) === 1 && isset($filter_diff['page']))) {
                 $data['page'] = Page::INIT_PAGE;
                 $filters->fillData(['page' => Page::INIT_PAGE], force: true);
             }
@@ -222,7 +221,7 @@ abstract class CatalogController
                 $this->_save_filters_to_cache($filters->getValues());
             }
         }
-        $content = $this->_get_content($request->getUri()->withPath($this->get_index_route()), $filters, $data);
+        $content = $this->_get_content($request->getUri()->withPath(static::get_index_route()), $filters, $data);
 
         $map = $content['table']->toMap();
         $map['filter_changed'] = $filter_changed;
@@ -282,14 +281,14 @@ abstract class CatalogController
     {
         if (!$this->session->has(self::CACHE_CATALOG_KEY)) {
             return [];
-        } else {
-            $value = $this->session->get(self::CACHE_CATALOG_KEY, []);
-            if (!is_array($value)) {
-                return [];
-            }
-            $current_data = $value[$this->_class_cache_key()] ?? [];
-            return $current_data['filters'] ?? [];
         }
+
+        $value = $this->session->get(self::CACHE_CATALOG_KEY, []);
+        if (!is_array($value)) {
+            return [];
+        }
+        $current_data = $value[$this->_class_cache_key()] ?? [];
+        return $current_data['filters'] ?? [];
     }
 
     private function _save_filters_to_cache(array $values): void
