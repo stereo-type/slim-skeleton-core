@@ -127,7 +127,7 @@ function apex(chartObject: ChartModel) {
     chart.render()
 }
 
-function isInt(value) {
+function isInt(value: any) {
     const x = parseFloat(value);
     return !isNaN(value) && (x | 0) === x;
 }
@@ -135,7 +135,7 @@ function isInt(value) {
 function modify_data(data: Array<String | number>, type: String): Array<String | number> {
     if (type === 'candlestick') {
         data.forEach(function (outher, outherIndex) {
-            (outher['data'] ?? []).forEach(function (inner, innerIndex) {
+            (outher['data'] ?? []).forEach(function (inner: { [x: string]: number; }, innerIndex: string | number) {
                 if (isInt(inner['x'])) {
                     data[outherIndex]['data'][innerIndex]['x'] = new Date(inner['x'] * 1000);
                 }
@@ -150,7 +150,10 @@ window.addEventListener('DOMContentLoaded', function () {
     const wraps = document.getElementsByClassName('--chartWrap') as HTMLCollectionOf<Element> | null
     for (const wrap of wraps) {
         const route = wrap.getAttribute('data-route');
-        const data = {timelapse: wrap.getAttribute('data-timelapse') ?? 60};
+        const data = {
+            timelapse: wrap.getAttribute('data-timelapse') ?? 60,
+            id: wrap.getAttribute('data-id') ?? 0,
+        };
         post(route, data).then(response => response.json()).then(chartObject => {
             const library = chartObject['library'] ?? 'undefined'
             const header = chartObject['header'] ?? '';
