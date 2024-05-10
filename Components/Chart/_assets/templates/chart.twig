@@ -1,5 +1,5 @@
 <div class="chartWrap">
     <div class="fs-1 text-center mb-2 --header"></div>
-    <div class="--chartWrap" data-route="{{ route }}" data-timelapse="{{ timelapse }}"
-         data-id="{{ params.id| default(null) }}"></div>
+    <div class="--chartWrap" data-route="{{ route }}"
+         data-timelapse="{{ timelapse }}" {% for key,value in params %} data-param-{{ key }}="{{ value }}" {% endfor %}></div>
 </div>

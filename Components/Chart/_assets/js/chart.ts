@@ -1,5 +1,5 @@
 import Chart, {ChartDataset, ChartItem, ChartTypeRegistry} from 'chart.js/auto'
-import ApexCharts from 'apexcharts'
+import * as ApexCharts from 'apexcharts'
 import {post} from "../../../../_assets/js/ajax";
 
 enum ChartLibrary {
@@ -18,7 +18,7 @@ class ChartModel {
     public readonly datasets: ChartDataset<keyof ChartTypeRegistry, (number | [number, number])>[];
 
     public readonly apexContext: HTMLElement;
-    public readonly series: Array<String | number>;
+    public readonly series: Record<string | number, any>;
 
     public readonly options: Record<string, any>;
 
@@ -121,7 +121,8 @@ function apex(chartObject: ChartModel) {
         /**Options*/
         xaxis: {
             categories: chartObject.labels
-        }
+        },
+        yaxis: options['yaxis'] ?? {}
     }
     const chart = new ApexCharts(chartObject.apexContext, config)
     chart.render()
@@ -132,10 +133,10 @@ function isInt(value: any) {
     return !isNaN(value) && (x | 0) === x;
 }
 
-function modify_data(data: Array<String | number>, type: String): Array<String | number> {
+function modify_data(data: Record<string | number, any>, type: String): Record<string | number, any> {
     if (type === 'candlestick') {
-        data.forEach(function (outher, outherIndex) {
-            (outher['data'] ?? []).forEach(function (inner: { [x: string]: number; }, innerIndex: string | number) {
+        data.forEach(function (outher: any, outherIndex: any) {
+            (outher['data'] ?? []).forEach(function (inner: any, innerIndex: any) {
                 if (isInt(inner['x'])) {
                     data[outherIndex]['data'][innerIndex]['x'] = new Date(inner['x'] * 1000);
                 }
@@ -146,14 +147,28 @@ function modify_data(data: Array<String | number>, type: String): Array<String |
 }
 
 
+type DataObject = {
+    timelapse: string | number;
+    id: string | number;
+    [param: string]: any;
+}
+
 window.addEventListener('DOMContentLoaded', function () {
     const wraps = document.getElementsByClassName('--chartWrap') as HTMLCollectionOf<Element> | null
     for (const wrap of wraps) {
         const route = wrap.getAttribute('data-route');
-        const data = {
+        let data: DataObject = {
             timelapse: wrap.getAttribute('data-timelapse') ?? 60,
             id: wrap.getAttribute('data-id') ?? 0,
         };
+
+        for (const attr of wrap.getAttributeNames()) {
+            if (attr.startsWith('data-param-')) {
+                const param = attr.replace('data-param-', '');
+                data[param] = wrap.getAttribute(attr);
+            }
+        }
+
         post(route, data).then(response => response.json()).then(chartObject => {
             const library = chartObject['library'] ?? 'undefined'
             const header = chartObject['header'] ?? '';
