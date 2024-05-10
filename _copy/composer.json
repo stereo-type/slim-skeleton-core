@@ -18,7 +18,6 @@
         "ext-redis": "*",
         "beberlei/doctrineextensions": "dev-master",
         "boruta/php-trader-ide-autocomplete": "^3.0",
-        "ccxt/ccxt": "^4.2",
         "doctrine/dbal": "^3.4",
         "doctrine/migrations": "^3.5",
         "doctrine/orm": "^2.13",
