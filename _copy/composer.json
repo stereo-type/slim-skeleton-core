@@ -6,7 +6,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "App\\Tests\\": "tests/"
         }
     },
     "config": {
@@ -17,10 +17,13 @@
         "ext-pdo": "*",
         "ext-redis": "*",
         "beberlei/doctrineextensions": "dev-master",
+        "boruta/php-trader-ide-autocomplete": "^3.0",
+        "ccxt/ccxt": "^4.2",
         "doctrine/dbal": "^3.4",
         "doctrine/migrations": "^3.5",
         "doctrine/orm": "^2.13",
         "ezyang/htmlpurifier": "^4.17",
+        "irazasyed/telegram-bot-sdk": "^3.14",
         "itsgoingd/clockwork": "^5.1",
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
@@ -51,6 +54,7 @@
         "vlucas/valitron": "^1.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.6",
+        "symfony/test-pack": "^1.1"
     }
 }
