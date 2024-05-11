@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Filters;
+namespace App\Core\Features\User\Services;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Features\User\Entity\User;

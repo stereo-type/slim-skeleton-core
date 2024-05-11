@@ -7,11 +7,11 @@ namespace App\Core\Features\User\Controllers;
 use App\Core\Contracts\RequestValidatorFactoryInterface;
 use App\Core\Enum\ServerStatus;
 use App\Core\Exception\ValidationException;
+use App\Core\Features\Auth\RequestValidators\ForgotPasswordRequestValidator;
 use App\Core\Features\User\Contracts\UserProviderServiceInterface;
+use App\Core\Features\User\RequestValidators\ResetPasswordRequestValidator;
+use App\Core\Features\User\Services\PasswordResetService;
 use App\Core\Mail\ForgotPasswordEmail;
-use App\Core\Repository\User\PasswordResetRepository;
-use App\Core\RequestValidators\ForgotPasswordRequestValidator;
-use App\Core\RequestValidators\ResetPasswordRequestValidator;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -28,7 +28,7 @@ readonly class PasswordResetController
         private Twig $twig,
         private RequestValidatorFactoryInterface $requestValidatorFactory,
         private UserProviderServiceInterface $userProviderService,
-        private PasswordResetRepository $passwordResetService,
+        private PasswordResetService $passwordResetService,
         private ForgotPasswordEmail $forgotPasswordEmail
     ) {
     }

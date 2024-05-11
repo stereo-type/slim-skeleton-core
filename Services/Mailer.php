@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core;
+namespace App\Core\Services;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;

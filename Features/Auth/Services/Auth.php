@@ -11,7 +11,7 @@ use App\Core\Features\Auth\Enum\AuthAttemptStatus;
 use App\Core\Features\User\Contracts\AuthInterface;
 use App\Core\Features\User\Contracts\UserInterface;
 use App\Core\Features\User\Contracts\UserProviderServiceInterface;
-use App\Core\Filters\UserLoginCodeService;
+use App\Core\Features\User\Services\UserLoginCodeService;
 use App\Core\Mail\SignupEmail;
 use App\Core\Mail\TwoFactorAuthEmail;
 use Exception;

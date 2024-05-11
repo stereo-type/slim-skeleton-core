@@ -24,10 +24,9 @@ use App\Core\Components\Catalog\Model\Filter\Collections\FilterComparisons;
 
 use BackedEnum;
 use DateTime;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Exception;
 use stdClass;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Throwable;
 use ReflectionClass;
 use InvalidArgumentException;
@@ -62,6 +61,7 @@ use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Doctrine\ORM\Mapping\Entity;
 
 abstract class EntityDataProvider extends AbstractDataProvider implements CatalogFormInterface
 {
@@ -110,7 +110,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         $this->reflection = new ReflectionClass((string)static::ENTITY_CLASS);
         $this->translator = $container->get(TranslatorInterface::class);
 
-        $entityAttributes = $this->reflection->getAttributes('Doctrine\ORM\Mapping\Entity');
+        $entityAttributes = $this->reflection->getAttributes(Entity::class);
         if (empty($entityAttributes)) {
             throw new InvalidArgumentException('Класс сущности должен иметь аттрибут Doctrine\ORM\Mapping\Entity');
         }
@@ -190,10 +190,8 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
             if (!empty(self::$_properties['all'])) {
                 return self::$_properties['all'];
             }
-        } else {
-            if (!empty(self::$_properties['short'])) {
-                return self::$_properties['short'];
-            }
+        } elseif (!empty(self::$_properties['short'])) {
+            return self::$_properties['short'];
         }
 
         $props = $this->reflection->getProperties();
@@ -217,7 +215,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                     $ob->isEnum = true;
                     $ob->enumClass = $attr->arguments['enumType'];
                 }
-                if ($attr->name == 'Doctrine\ORM\Mapping\ManyToOne') {
+                if ($attr->name === 'Doctrine\ORM\Mapping\ManyToOne') {
                     $ob->manyToOne = true;
                     $ob->manyToOneClass = $attr->arguments['targetEntity'];
                 }
@@ -299,7 +297,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
     /**
      * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws NotFoundExceptionInterface|NotSupported
      */
     public function filters(array $filterData): Filters
     {
@@ -307,7 +305,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         $exclude_filters = $this->exclude_entity_filters();
         $translator = $this->translator;
         foreach ($this->get_properties() as $key => $prop) {
-            if (!in_array($key, $exclude_filters)) {
+            if (!in_array($key, $exclude_filters, true)) {
                 /**TODO сделать поддержку других фильтров*/
                 $name = $prop->replacedName ?? $prop->name;
                 if ($prop->isEnum) {
@@ -365,7 +363,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
 
         foreach ($item as $k => $v) {
-            if (in_array($k, $exclude)) {
+            if (in_array($k, $exclude, true)) {
                 continue;
             }
             /**Приметивные типы*/
@@ -391,47 +389,52 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 $v instanceof PersistentCollection &&
                 static::ENTITY_REF_COLLECTION_LIST
             ) {
-                $list = array_map(static function ($e) {
-                    $method = static::ENTITY_REF_COLLECTION_LINK_METHOD;
-                    return '<li>' . $e->$method() . '</li>';
-                }, $v->toArray());
+                $_array = $v->toArray();
+                if (!empty($_array)) {
+                    $first = reset($_array);
+                    if (method_exists($first, static::ENTITY_REF_COLLECTION_LINK_METHOD)) {
+                        $list = array_map(static function ($e) {
+                            $method = static::ENTITY_REF_COLLECTION_LINK_METHOD;
+                            return '<li>' . $e->$method() . '</li>';
+                        }, $v->toArray());
 
-                $result[] = '<ul>' . implode('', $list) . '</ul>';
-            } else {
-                if (is_object($v)) {
-                    try {
-                        $meta = $this->entityManager->getClassMetadata(get_class($v));
-                        $allAssociations = $meta->getAssociationMappings();
-                        foreach ($allAssociations as $fieldName => $mapping) {
-                            if (in_array($fieldName, $exclude)) {
-                                continue;
-                            }
-                            if ($mapping['type'] === ClassMetadataInfo::MANY_TO_ONE) {
-                                $list = array_map(static function ($e) {
-                                    $method = static::ENTITY_REF_COLLECTION_LINK_METHOD;
-                                    return '<li>' . $e->$method() . '</li>';
-                                }, $v->toArray());
-
-                                $result[] = '<ul>' . implode('', $list) . '</ul>';
-                                break;
-                            } elseif ($mapping['type'] === ClassMetadataInfo::ONE_TO_MANY) {
-                                $method = static::ENTITY_REF_LINK_METHOD;
-                                $result[] = $v->$method();
-                                break;
-                            }
-                        }
-                    } catch (Throwable $e) {
-                        $result[] = gettype($v);
+                        $result[] = '<ul>' . implode('', $list) . '</ul>';
                     }
-                } else {
+                }
+            } elseif (is_object($v)) {
+                try {
+                    $meta = $this->entityManager->getClassMetadata(get_class($v));
+                    $allAssociations = $meta->getAssociationMappings();
+                    foreach ($allAssociations as $fieldName => $mapping) {
+                        if (in_array($fieldName, $exclude, true)) {
+                            continue;
+                        }
+                        if ($mapping['type'] === ClassMetadataInfo::MANY_TO_ONE) {
+                            $list = array_map(static function ($e) {
+                                $method = static::ENTITY_REF_COLLECTION_LINK_METHOD;
+                                return '<li>' . $e->$method() . '</li>';
+                            }, $v->toArray());
+
+                            $result[] = '<ul>' . implode('', $list) . '</ul>';
+                            break;
+                        }
+
+                        if ($mapping['type'] === ClassMetadataInfo::ONE_TO_MANY) {
+                            $method = static::ENTITY_REF_LINK_METHOD;
+                            $result[] = $v->$method();
+                            break;
+                        }
+                    }
+                } catch (Throwable) {
                     $result[] = gettype($v);
                 }
+            } else {
+                $result[] = gettype($v);
             }
         }
         $result[] = $this->manage_buttons($twig, (int)$item['id']);
 
-        $row = Row::build($result);
-        return $row->cells;
+        return Row::build($result)->cells;
     }
 
     /**
@@ -559,21 +562,19 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
             if (isset($override[$fieldName]) && $override[$fieldName] instanceof FormField) {
                 $formField = $override[$fieldName];
                 $formBuilder->add($formField->fieldName, $formField->fieldType, $formField->options);
-            } else {
-                if ($metadata->isAssociationWithSingleJoinColumn($fieldName)) {
-                    $map = $metadata->getAssociationMapping($fieldName);
-                    $targetEntity = $map['targetEntity'];
-                    $entities = $this
-                        ->entityManager
-                        ->getRepository($targetEntity)
-                        ->findBy(static::FORM_ENTITY_PARAMS_ASSOCIATION);
+            } elseif ($metadata->isAssociationWithSingleJoinColumn($fieldName)) {
+                $map = $metadata->getAssociationMapping($fieldName);
+                $targetEntity = $map['targetEntity'];
+                $entities = $this
+                    ->entityManager
+                    ->getRepository($targetEntity)
+                    ->findBy(static::FORM_ENTITY_PARAMS_ASSOCIATION);
 
-                    $method = static::ENTITY_REF_LINK_METHOD;
-                    $names = array_map(static fn ($e) => $e->$method(), $entities);
-                    $choices = array_combine($names, $entities);
-                    $options = ['attr' => ['placeholder' => ucfirst($fieldName)], 'choices' => $choices];
-                    $formBuilder->add($fieldName, ChoiceType::class, $options);
-                }
+                $method = static::ENTITY_REF_LINK_METHOD;
+                $names = array_map(static fn ($e) => $e->$method(), $entities);
+                $choices = array_combine($names, $entities);
+                $options = ['attr' => ['placeholder' => ucfirst($fieldName)], 'choices' => $choices];
+                $formBuilder->add($fieldName, ChoiceType::class, $options);
             }
         }
 
@@ -669,9 +670,9 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 $this->container->get(EntityManagerService::class)->sync($data);
                 $this->after_save($data);
                 return true;
-            } else {
-                throw new Exception('data must be type ' . static::ENTITY_CLASS);
             }
+
+            throw new RuntimeException('data must be type ' . static::ENTITY_CLASS);
         } catch (ValidationException $e) {
             /**Перепрокидываем наверх*/
             throw $e;

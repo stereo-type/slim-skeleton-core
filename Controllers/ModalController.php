@@ -9,11 +9,10 @@ declare(strict_types=1);
 
 namespace App\Core\Controllers;
 
+use App\Core\Services\RequestService;
+use App\Core\Services\ResponseFormatter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-
-use App\Core\ResponseFormatter;
-use App\Core\Services\RequestService;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;

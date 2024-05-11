@@ -8,23 +8,23 @@ use App\Core\Config;
 use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Contracts\RequestValidatorFactoryInterface;
 use App\Core\Contracts\SessionInterface;
-use App\Core\Csrf;
 use App\Core\DataObjects\SessionConfig;
 use App\Core\Enum\SameSite;
 use App\Core\Enum\StorageDriver;
 use App\Core\Features\Auth\Services\Auth;
 use App\Core\Features\User\Contracts\AuthInterface;
 use App\Core\Features\User\Contracts\UserProviderServiceInterface;
-use App\Core\Filters\UserFilter;
+use App\Core\Features\User\Filters\UserFilter;
+use App\Core\Features\User\Services\UserProviderService;
 use App\Core\Lib\Files;
-use App\Core\Repository\User\UserProviderRepository;
 use App\Core\RequestValidators\RequestValidatorFactory;
-use App\Core\RouteEntityBindingStrategy;
+use App\Core\Services\Csrf;
 use App\Core\Services\EntityManagerService;
 use App\Core\Services\Purifier;
 use App\Core\Services\RequestConvertor;
+use App\Core\Services\RouteEntityBindingStrategy;
+use App\Core\Services\Session;
 use App\Core\Services\Translator;
-use App\Core\Session;
 use Clockwork\Clockwork;
 use Clockwork\DataSource\DoctrineDataSource;
 use Clockwork\Storage\FileStorage;
@@ -155,7 +155,7 @@ $coreBindings = [
     AuthInterface::class                    =>
         static fn (ContainerInterface $container) => $container->get(Auth::class),
     UserProviderServiceInterface::class     =>
-        static fn (ContainerInterface $container) => $container->get(UserProviderRepository::class),
+        static fn (ContainerInterface $container) => $container->get(UserProviderService::class),
     RequestValidatorFactoryInterface::class =>
         static fn (ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
     'csrf'                                  =>
@@ -192,7 +192,7 @@ $coreBindings = [
     MailerInterface::class                  =>
         static function (Config $config) {
             if ($config->get('mailer.driver') === 'log') {
-                return new \App\Core\Mailer();
+                return new \App\Core\Services\Mailer();
             }
             $transport = Transport::fromDsn($config->get('mailer.dsn'));
             return new Mailer($transport);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\RequestValidators;
+namespace App\Core\Features\Auth\RequestValidators;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Contracts\RequestValidatorInterface;

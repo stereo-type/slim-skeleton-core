@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core;
+namespace App\Core\Services;
 
+use App\Core\Config;
 use DateTime;
 use Slim\Interfaces\RouteParserInterface;
 

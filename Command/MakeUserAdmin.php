@@ -6,7 +6,7 @@ namespace App\Core\Command;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Features\Role\Entity\Role;
-use App\Core\Features\Role\RoleService\RoleService;
+use App\Core\Features\Role\RoleService\RoleAssignService;
 use App\Core\Features\User\Entity\User;
 use Exception;
 use Symfony\Component\Console\Command\Command;
@@ -23,7 +23,7 @@ class MakeUserAdmin extends Command
 
     public function __construct(
         private readonly EntityManagerServiceInterface $entityManager,
-        private readonly RoleService $roleService,
+        private readonly RoleAssignService $roleService,
     ) {
         parent::__construct();
     }

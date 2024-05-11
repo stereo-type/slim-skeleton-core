@@ -4,6 +4,7 @@ namespace App\Core\Features\Permission\Entity;
 
 use App\Core\Entity\Traits\HasTimestamps;
 use App\Core\Features\Permission\Enum\PermissionType;
+use App\Core\Features\Role\Entity\RolePermission;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -30,7 +31,7 @@ class Permission
     private PermissionType $type;
 
 
-    #[ORM\OneToMany(mappedBy: 'permission', targetEntity: 'RolePermission', cascade: ["persist", "remove"])]
+    #[ORM\OneToMany(mappedBy: 'permission', targetEntity: RolePermission::class, cascade: ["persist", "remove"])]
     private Collection $rolePermissions;
 
 

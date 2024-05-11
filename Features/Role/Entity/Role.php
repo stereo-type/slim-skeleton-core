@@ -14,13 +14,11 @@ class Role
 {
     use HasTimestamps;
 
-
     public const ADMIN = 'admin';
 
     public const MANAGER = 'manager';
 
     public const CUSTOMER = 'customer';
-
 
     #[ORM\Id, ORM\Column(options: ['unsigned' => true]), ORM\GeneratedValue]
     private int $id;
@@ -30,27 +28,30 @@ class Role
     #[ORM\Column(length: '64', unique: true)]
     private string $name;
 
-    #[ORM\Column(length: '255', nullable: true)]
-    private string $fullname;
+    #[ORM\Column(length: '255', nullable: true, options: ['default' => null])]
+    private ?string $fullname = null;
 
-    #[ORM\Column(length: '64', nullable: true)]
-    private string $archetype;
+    #[ORM\Column(length: '64', nullable: true, options: ['default' => null])]
+    private ?string $archetype = null;
 
-    #[ORM\Column(length: '255', nullable: true)]
-    private string $description;
+    #[ORM\Column(length: '255', nullable: true, options: ['default' => null])]
+    private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'role', targetEntity: 'RoleAssignment', cascade: ["persist", "remove"])]
+    #[ORM\OneToMany(mappedBy: 'role', targetEntity: RoleAssignment::class, cascade: ["persist", "remove"])]
     private Collection $assignments;
 
-    #[ORM\OneToMany(mappedBy: 'permission', targetEntity: 'RolePermission', cascade: ["persist", "remove"])]
+    #[ORM\OneToMany(mappedBy: 'permission', targetEntity: RolePermission::class, cascade: ["persist", "remove"])]
     private Collection $permissions;
-
 
     public function getId(): int
     {
         return $this->id;
     }
 
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
 
     public function getName(): string
     {
@@ -63,14 +64,15 @@ class Role
         return $this;
     }
 
-    public function getPermissions(): Collection
-    {
-        return $this->permissions;
-    }
-
     public function getFullname(): string
     {
         return $this->fullname;
+    }
+
+    public function setFullname(?string $fullname): self
+    {
+        $this->fullname = $fullname;
+        return $this;
     }
 
     public function getArchetype(): string
@@ -78,14 +80,43 @@ class Role
         return $this->archetype;
     }
 
+    public function setArchetype(?string $archetype): self
+    {
+        $this->archetype = $archetype;
+        return $this;
+    }
+
     public function getDescription(): string
     {
         return $this->description;
     }
 
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+        return $this;
+    }
+
     public function getAssignments(): Collection
     {
         return $this->assignments;
+    }
+
+    public function setAssignments(Collection $assignments): self
+    {
+        $this->assignments = $assignments;
+        return $this;
+    }
+
+    public function getPermissions(): Collection
+    {
+        return $this->permissions;
+    }
+
+    public function setPermissions(Collection $permissions): self
+    {
+        $this->permissions = $permissions;
+        return $this;
     }
 
 

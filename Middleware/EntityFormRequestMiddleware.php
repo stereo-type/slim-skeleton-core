@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace App\Core\Middleware;
 
-use Throwable;
-
+use App\Core\Services\RequestService;
+use App\Core\Services\ResponseFormatter;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-
+use Throwable;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-
-use App\Core\ResponseFormatter;
-use App\Core\Services\RequestService;
 
 readonly class EntityFormRequestMiddleware implements MiddlewareInterface
 {

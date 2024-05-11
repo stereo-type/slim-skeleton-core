@@ -26,6 +26,7 @@ use Twig\Error\SyntaxError;
 
 abstract class EntityCatalogController extends CatalogController
 {
+    public const USE_CACHE = true;
     public const FORM_TEMPLATE = 'catalog/edit_form_layout.twig';
     public const FORM_TEMPLATE_AJAX = 'catalog/edit_form.twig';
 

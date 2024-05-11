@@ -17,11 +17,11 @@ class RolePermission
     #[Orm\Column(type: 'string', enumType: PermissionValue::class)]
     private PermissionValue $value;
 
-    #[ORM\ManyToOne(targetEntity: 'Permission', inversedBy: 'rolePermissions')]
+    #[ORM\ManyToOne(targetEntity: Permission::class, inversedBy: 'rolePermissions')]
     #[ORM\JoinColumn(nullable: false)]
     private Permission $permission;
 
-    #[ORM\ManyToOne(targetEntity: 'Role', inversedBy: 'rolePermissions')]
+    #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'rolePermissions')]
     #[ORM\JoinColumn(nullable: false)]
     private Role $role;
 

@@ -2,6 +2,8 @@
 
 namespace App\Core\Widgets;
 
+use App\Core\Contracts\Renderable;
+use App\Core\Contracts\Templatable;
 use GuzzleHttp\Psr7\Query;
 use Psr\Http\Message\UriInterface;
 use Slim\Views\Twig;
@@ -10,7 +12,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class PagingBar
+class PagingBar implements Templatable, Renderable
 {
     public const PAGINBAR_TEMPLATE = 'catalog/paginbar.twig';
     /**

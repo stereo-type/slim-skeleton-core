@@ -14,11 +14,11 @@ class RoleAssignment implements RoleAssignmentInterface
     #[ORM\Id, ORM\Column(options: ['unsigned' => true]), ORM\GeneratedValue]
     private int $id;
 
-    #[ORM\ManyToOne(targetEntity: 'User', inversedBy: 'assignments')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'assignments')]
     #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
-    #[ORM\ManyToOne(targetEntity: 'Role', inversedBy: 'assignments')]
+    #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'assignments')]
     #[ORM\JoinColumn(nullable: false)]
     private Role $role;
 

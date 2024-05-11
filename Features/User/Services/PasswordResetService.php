@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Repository\User;
+namespace App\Core\Features\User\Services;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Features\User\Contracts\UserProviderServiceInterface;
@@ -12,7 +12,7 @@ use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;
 
-readonly class PasswordResetRepository
+readonly class PasswordResetService
 {
     public function __construct(
         private EntityManagerServiceInterface $entityManagerService,

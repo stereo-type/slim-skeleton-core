@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Repository\User;
+namespace App\Core\Features\User\Services;
 
 use App\Core\Components\Catalog\Providers\EntityDataProvider;
 use App\Core\Features\User\Entity\User;

@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Core;
+namespace App\Core\Services;
 
 use Exception;
 use Psr\Http\Message\ResponseInterface;
-
 use Slim\Views\Twig;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;

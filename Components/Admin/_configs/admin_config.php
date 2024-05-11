@@ -13,8 +13,8 @@ return static function (App $app, AdminRoot $root): void {
         new AdminPage('user', 'Список пользователей', Url::build('/admin/user'))
     ]);
     $usersSub [] = new AdminCategory('roles', 'Роли', [
-        new AdminPage('manage', 'Управление ролями', Url::build('/admin/roles/manage')),
-        new AdminPage('assign', 'Назначение ролей', Url::build('/admin/roles/assign')),
+        new AdminPage('manage', 'Управление ролями', Url::build('/admin/role/manage')),
+        new AdminPage('assign', 'Назначение ролей', Url::build('/admin/role/assign')),
     ]);
     $users = new AdminCategory('users', 'Пользователи', $usersSub);
 

@@ -6,6 +6,7 @@ namespace App\Core\Features\User\Entity;
 
 use App\Core\Entity\Traits\HasTimestamps;
 use App\Core\Features\Role\Entity\Role;
+use App\Core\Features\Role\Entity\RoleAssignment;
 use App\Core\Features\Role\Role\RoleAssignmentInterface;
 use App\Core\Features\User\Contracts\OwnableInterface;
 use App\Core\Features\User\Contracts\UserInterface;
@@ -45,7 +46,7 @@ class User implements UserInterface
     #[ORM\Column(name: 'verified_at', nullable: true)]
     private ?DateTime $verifiedAt;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: 'RoleAssignment', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: RoleAssignment::class, cascade: ['persist', 'remove'])]
     private Collection $assignments;
 
     public function __construct()

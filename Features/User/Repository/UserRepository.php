@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Repository\User;
+namespace App\Core\Features\User\Repository;
 
 use App\Core\Features\Role\Entity\Role;
 use App\Core\Features\User\Entity\User;

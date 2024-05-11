@@ -13,9 +13,11 @@ use App\Core\Contracts\SessionInterface;
 use App\Core\Enum\ServerStatus;
 use App\Core\Middleware\AuthMiddleware;
 use App\Core\Middleware\EntityFormRequestMiddleware;
-use App\Core\ResponseFormatter;
+use App\Core\Services\ResponseFormatter;
 use App\Core\Widgets\PagingBar;
-
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -23,19 +25,13 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
-
 use Slim\App;
 use Slim\Interfaces\RouteGroupInterface;
 use Slim\Routing\RouteCollectorProxy;
 use Slim\Views\Twig;
-
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use Doctrine\ORM\EntityManagerInterface;
-
-use Exception;
-use InvalidArgumentException;
 
 /**Класс для построения контроллеров таблиц без привязки к сущностям (Entity). Релизация:
  ** 1) Создать класс провайдер данных, имплементирующий {@link CatalogDataProviderInterface} и {@link CatalogFilterInterface}.

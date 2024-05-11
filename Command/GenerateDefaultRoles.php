@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Core\Command;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
+use App\Core\Features\Role\RoleService\RoleService;
 use App\Core\Features\User\Contracts\AuthInterface;
-use App\Core\Repository\Role\RoleService;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

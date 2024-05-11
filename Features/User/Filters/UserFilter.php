@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Filters;
+namespace App\Core\Features\User\Filters;
 
 use App\Core\Container;
 use App\Core\Contracts\EntityManagerServiceInterface;
-use App\Core\Features\User\Entity\User;
 use App\Core\Features\User\Contracts\OwnableInterface;
 use App\Core\Features\User\Contracts\UserInterface;
+use App\Core\Features\User\Entity\User;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter;
 use Psr\Container\ContainerExceptionInterface;

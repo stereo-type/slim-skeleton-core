@@ -8,7 +8,7 @@ use App\Core\Components\Admin\Model\Tree\AdminRoot;
 use App\Core\Contracts\RequestValidatorFactoryInterface;
 use App\Core\Features\User\Contracts\AuthInterface;
 use App\Core\Lib\Url;
-use App\Core\ResponseFormatter;
+use App\Core\Services\ResponseFormatter;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;

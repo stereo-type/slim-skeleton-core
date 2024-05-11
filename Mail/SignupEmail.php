@@ -6,7 +6,7 @@ namespace App\Core\Mail;
 
 use App\Core\Config;
 use App\Core\Features\User\Entity\User;
-use App\Core\SignedUrl;
+use App\Core\Services\SignedUrl;
 use DateTime;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;

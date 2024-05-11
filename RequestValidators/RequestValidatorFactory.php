@@ -18,7 +18,7 @@ readonly class RequestValidatorFactory implements RequestValidatorFactoryInterfa
     }
 
     /**
-     * @param  string  $class
+     * @param string $class
      * @return RequestValidatorInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
