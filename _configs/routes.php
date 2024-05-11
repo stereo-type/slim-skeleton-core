@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Core\Controllers\AuthController;
 use App\Core\Controllers\HomeController;
 use App\Core\Controllers\ModalController;
-use App\Core\Controllers\PasswordResetController;
-use App\Core\Controllers\ProfileController;
-use App\Core\Controllers\VerifyController;
+use App\Core\Features\Auth\Controllers\AuthController;
+use App\Core\Features\User\Controllers\PasswordResetController;
+use App\Core\Features\User\Controllers\ProfileController;
+use App\Core\Features\User\Controllers\VerifyController;
 use App\Core\Lib\Files;
 use App\Core\Middleware\AuthMiddleware;
 use App\Core\Middleware\GuestMiddleware;

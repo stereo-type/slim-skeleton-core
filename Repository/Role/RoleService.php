@@ -3,9 +3,9 @@
 namespace App\Core\Repository\Role;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
-use App\Core\Contracts\User\AuthInterface;
-use App\Core\Contracts\User\UserInterface;
-use App\Core\Entity\Role;
+use App\Core\Features\Role\Entity\Role;
+use App\Core\Features\User\Contracts\AuthInterface;
+use App\Core\Features\User\Contracts\UserInterface;
 use Doctrine\DBAL\Connection;
 
 readonly class RoleService

@@ -6,8 +6,8 @@ namespace App\Core\RequestValidators;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Contracts\RequestValidatorInterface;
-use App\Core\Entity\User;
 use App\Core\Exception\ValidationException;
+use App\Core\Features\User\Entity\User;
 use Valitron\Validator;
 
 readonly class RegisterUserRequestValidator implements RequestValidatorInterface

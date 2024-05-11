@@ -2,8 +2,8 @@
 
 namespace App\Core\Repository\User;
 
-use App\Core\Entity\Role;
-use App\Core\Entity\User;
+use App\Core\Features\Role\Entity\Role;
+use App\Core\Features\User\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
 class UserRepository extends EntityRepository

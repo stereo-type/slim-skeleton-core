@@ -6,7 +6,7 @@ namespace App\Core\Components\Admin\Controllers;
 
 use App\Core\Components\Admin\Model\Tree\AdminRoot;
 use App\Core\Contracts\RequestValidatorFactoryInterface;
-use App\Core\Contracts\User\AuthInterface;
+use App\Core\Features\User\Contracts\AuthInterface;
 use App\Core\Lib\Url;
 use App\Core\ResponseFormatter;
 use Psr\Http\Message\ResponseInterface as Response;

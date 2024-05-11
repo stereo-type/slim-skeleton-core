@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Core\Middleware;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
-use App\Core\Contracts\User\AuthInterface;
 use App\Core\Enum\ServerStatus;
+use App\Core\Features\User\Contracts\AuthInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

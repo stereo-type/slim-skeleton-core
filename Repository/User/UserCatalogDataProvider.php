@@ -9,12 +9,11 @@ declare(strict_types=1);
 
 namespace App\Core\Repository\User;
 
+use App\Core\Components\Catalog\Providers\EntityDataProvider;
+use App\Core\Features\User\Entity\User;
+use App\Core\Services\HashService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-
-use App\Core\Entity\User;
-use App\Core\Services\HashService;
-use App\Core\Components\Catalog\Providers\EntityDataProvider;
 
 class UserCatalogDataProvider extends EntityDataProvider
 {

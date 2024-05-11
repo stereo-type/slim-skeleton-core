@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\Core\Command;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
-use App\Core\Contracts\User\AuthInterface;
+use App\Core\Features\User\Contracts\AuthInterface;
 use App\Core\Repository\Role\RoleService;
-
 use Exception;
-use Throwable;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class GenerateDefaultRoles extends Command
 {

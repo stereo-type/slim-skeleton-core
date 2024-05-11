@@ -3,15 +3,13 @@
 namespace App\Core\Middleware;
 
 use App\Core\Container;
-use App\Core\Contracts\User\AuthInterface;
-use App\Core\Contracts\User\UserInterface;
-use App\Core\Entity\Permission;
-use App\Core\Entity\Role;
 use App\Core\Enum\ServerStatus;
-
+use App\Core\Features\Permission\Entity\Permission;
+use App\Core\Features\Role\Entity\Role;
+use App\Core\Features\User\Contracts\AuthInterface;
+use App\Core\Features\User\Contracts\UserInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
-
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseFactoryInterface;

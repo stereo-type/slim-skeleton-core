@@ -6,10 +6,9 @@ namespace App\Core;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Contracts\SessionInterface;
-use App\Core\Contracts\User\UserInterface;
 use App\Core\DataObjects\SessionConfig;
 use App\Core\Exception\SessionException;
-use App\Core\Entity\User;
+use App\Core\Features\User\Entity\User;
 
 readonly class Session implements SessionInterface
 {

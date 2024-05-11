@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Contracts;
 
-use App\Core\Entity\User;
+use App\Core\Features\User\Entity\User;
 
 interface SessionInterface
 {

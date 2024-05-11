@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 
 use App\Core\_configs\builder\twig\Builder;
-use App\Core\Auth;
 use App\Core\Config;
 use App\Core\Contracts\EntityManagerServiceInterface;
 use App\Core\Contracts\RequestValidatorFactoryInterface;
 use App\Core\Contracts\SessionInterface;
-use App\Core\Contracts\User\AuthInterface;
-use App\Core\Contracts\User\UserProviderServiceInterface;
 use App\Core\Csrf;
 use App\Core\DataObjects\SessionConfig;
 use App\Core\Enum\SameSite;
 use App\Core\Enum\StorageDriver;
+use App\Core\Features\Auth\Services\Auth;
+use App\Core\Features\User\Contracts\AuthInterface;
+use App\Core\Features\User\Contracts\UserProviderServiceInterface;
 use App\Core\Filters\UserFilter;
 use App\Core\Lib\Files;
 use App\Core\Repository\User\UserProviderRepository;

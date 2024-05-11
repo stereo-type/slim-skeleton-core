@@ -6,11 +6,11 @@ namespace App\Core\Filters;
 
 use App\Core\Container;
 use App\Core\Contracts\EntityManagerServiceInterface;
-use App\Core\Contracts\User\UserInterface;
-use App\Core\Entity\User;
+use App\Core\Features\User\Entity\User;
+use App\Core\Features\User\Contracts\OwnableInterface;
+use App\Core\Features\User\Contracts\UserInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter;
-use App\Core\Contracts\User\OwnableInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 

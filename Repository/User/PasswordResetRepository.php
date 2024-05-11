@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Core\Repository\User;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
-use App\Core\Contracts\User\UserProviderServiceInterface;
-use App\Core\Entity\PasswordReset;
-use App\Core\Entity\User;
+use App\Core\Features\User\Contracts\UserProviderServiceInterface;
+use App\Core\Features\User\Entity\PasswordReset;
+use App\Core\Features\User\Entity\User;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Exception;

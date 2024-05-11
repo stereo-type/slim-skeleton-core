@@ -9,19 +9,6 @@ declare(strict_types=1);
 
 namespace App\Core\Components\Catalog\Demo;
 
-use DateTime;
-
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
-
-use Slim\Views\Twig;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Query\QueryException;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\Common\Collections\Expr\Comparison;
-
-use App\Core\Entity\User;
 use App\Core\Components\Catalog\Enum\FilterType;
 use App\Core\Components\Catalog\Enum\ParamType;
 use App\Core\Components\Catalog\Model\Filter\Collections\FilterComparisons;
@@ -37,6 +24,16 @@ use App\Core\Components\Catalog\Model\Table\Collections\Rows;
 use App\Core\Components\Catalog\Model\Table\Row;
 use App\Core\Components\Catalog\Model\Table\Table;
 use App\Core\Components\Catalog\Providers\AbstractDataProvider;
+use App\Core\Features\User\Entity\User;
+use DateTime;
+use Doctrine\Common\Collections\Expr\Comparison;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query\QueryException;
+use Doctrine\ORM\QueryBuilder;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Slim\Views\Twig;
 
 class DemoDataProvider extends AbstractDataProvider
 {

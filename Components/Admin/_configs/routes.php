@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Core\Components\Admin\Controllers\AdminController;
-use App\Core\Controllers\UserCatalogController;
+use App\Core\Features\User\Controllers\UserCatalogController;
 use App\Core\Middleware\AuthMiddleware;
 use App\Core\Middleware\VerifyEmailMiddleware;
 use Slim\App;

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Core\Repository\User;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
-use App\Core\Contracts\User\UserInterface;
-use App\Core\Contracts\User\UserProviderServiceInterface;
-use App\Core\DataObjects\RegisterUserData;
-use App\Core\Entity\User;
+use App\Core\Features\Auth\DTO\RegisterUserData;
+use App\Core\Features\User\Entity\User;
+use App\Core\Features\User\Contracts\UserInterface;
+use App\Core\Features\User\Contracts\UserProviderServiceInterface;
 use App\Core\Services\HashService;
 use DateTime;
 

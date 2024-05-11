@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-use App\Core\Controllers\UserCatalogController;
+use App\Core\Features\User\Controllers\UserCatalogController;
 use App\Core\Repository\User\UserCatalogDataProvider;
 
 return [

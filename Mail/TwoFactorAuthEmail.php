@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Core\Mail;
 
+use App\Core\Config;
+use App\Core\Features\User\Entity\UserLoginCode;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\BodyRendererInterface;
-use App\Core\Config;
-use App\Core\Entity\UserLoginCode;
 
 readonly class TwoFactorAuthEmail
 {

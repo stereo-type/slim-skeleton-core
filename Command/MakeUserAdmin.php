@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Core\Command;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
-use App\Core\Entity\Role;
-use App\Core\Entity\User;
-use App\Core\Services\RoleService;
+use App\Core\Features\Role\Entity\Role;
+use App\Core\Features\Role\RoleService\RoleService;
+use App\Core\Features\User\Entity\User;
 use Exception;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Throwable;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 
 class MakeUserAdmin extends Command
 {
