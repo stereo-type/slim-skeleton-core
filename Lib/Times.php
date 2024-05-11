@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace App\Core\Lib;
 
-use App\Features\Enum\Format;
+use App\Core\Enum\Format;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
