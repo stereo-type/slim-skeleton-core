@@ -23,11 +23,6 @@ class RoleAssignment implements RoleAssignmentInterface
     #[ORM\JoinColumn(nullable: false)]
     private Role $role;
 
-
-    public function __construct(private readonly EntityManagerInterface $entityManager)
-    {
-    }
-
     public function getId(): int
     {
         return $this->id;
@@ -53,35 +48,5 @@ class RoleAssignment implements RoleAssignmentInterface
     {
         $this->role = $role;
         return $this;
-    }
-
-    public function addUserRole(User $user, Role $role, bool $flush = true): void
-    {
-        $assignment = new RoleAssignment($this->entityManager);
-        $assignment->setRole($role);
-        $assignment->setUser($user);
-        $this->entityManager->persist($assignment);
-        $this->entityManager->flush();
-    }
-
-    public function removeUserRole(User $user, Role $role, bool $flush = true): void
-    {
-        $assignment = $this->entityManager->getRepository(self::class)->findOneBy(['user' => $user, 'role' => $role]);
-        if ($assignment != null) {
-            $this->entityManager->remove($assignment);
-            $this->entityManager->flush();
-        }
-    }
-
-    public function changeUserRole(User $user, Role $oldRole, Role $newRole, bool $flush = true): void
-    {
-        $this->removeUserRole($user, $oldRole, false);
-        $this->addUserRole($user, $newRole, $flush);
-    }
-
-    public function getUserRoles(User $user): array
-    {
-        $assignments = $this->entityManager->getRepository(self::class)->findBy(['user' => $user]);
-        return array_map(static fn (self $a) => $a->getRole(), $assignments);
     }
 }

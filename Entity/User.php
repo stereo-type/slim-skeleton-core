@@ -137,10 +137,8 @@ class User implements UserInterface
     {
         $roles = $this->getRoles();
         foreach ($roles as $role) {
-            if ($role instanceof Role) {
-                if ($role->getName() == Role::ADMIN) {
-                    return true;
-                }
+            if (($role instanceof Role) && $role->getName() === Role::ADMIN) {
+                return true;
             }
         }
         return false;
