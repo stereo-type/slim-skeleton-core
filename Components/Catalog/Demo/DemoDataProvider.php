@@ -67,7 +67,6 @@ class DemoDataProvider extends AbstractDataProvider
                         ),
                     ]
                 ),
-
             ),
             Row::build(
                 [

@@ -10,7 +10,6 @@ use Symfony\Component\Finder\Iterator\RecursiveDirectoryIterator;
 
 class Files
 {
-
     /**
      * @param string $dir
      * @param bool $ucfirst
@@ -29,7 +28,7 @@ class Files
             if ($file->isFile()) {
                 $namespace = str_replace('/', '\\', substr($file->getPath(), strlen($root) + 1));
                 $class = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-                $fullClassName = ($ucfirst? ucfirst($namespace): $namespace) . '\\' . $class;
+                $fullClassName = ($ucfirst ? ucfirst($namespace) : $namespace) . '\\' . $class;
                 if (class_exists($fullClassName)) {
                     $reflectionClass = new ReflectionClass($fullClassName);
                     $classes[$fullClassName] = $reflectionClass;

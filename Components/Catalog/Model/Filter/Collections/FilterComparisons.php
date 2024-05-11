@@ -8,7 +8,6 @@ use App\Core\Components\Catalog\Model\Filter\FilterComparison;
 
 class FilterComparisons extends ArrayCollection
 {
-
     /**
      * @param FilterComparison[] $elements
      */
@@ -34,7 +33,7 @@ class FilterComparisons extends ArrayCollection
 
     public function getKeys()
     {
-        return array_map(static fn($e) => $e->name, $this->toArray());
+        return array_map(static fn ($e) => $e->name, $this->toArray());
     }
 
     public function get(string|int $key)

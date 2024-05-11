@@ -47,7 +47,6 @@ use InvalidArgumentException;
  * */
 abstract class CatalogController
 {
-
     /**Шаблон представления фильтров и таблицы, при необходимости переопределить*/
     public const TABLE_TEMPLATE = 'catalog/index.twig';
     public const CACHE_CATALOG_KEY = '_component_catalog';

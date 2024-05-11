@@ -17,7 +17,6 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class Search extends Filter
 {
-
     public const IGNORE_IN_FILTER_REQUEST = true;
 
     public function render(): string

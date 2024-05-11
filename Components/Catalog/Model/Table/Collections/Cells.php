@@ -15,7 +15,6 @@ use InvalidArgumentException;
 
 class Cells extends ArrayCollection
 {
-
     /**
      * @param  Cell[]  $elements
      */

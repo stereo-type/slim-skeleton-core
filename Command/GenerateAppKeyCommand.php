@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Core\Command;
 
@@ -70,4 +70,3 @@ class GenerateAppKeyCommand extends Command
         return Command::SUCCESS;
     }
 }
-

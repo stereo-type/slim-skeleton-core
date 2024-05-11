@@ -11,7 +11,6 @@ namespace App\Core\Components\Catalog\Demo;
 
 use App\Core\Components\Catalog\Controllers\CatalogController;
 
-
 /**
  * маршруты прописаны тут
  * app/Core/Components/Catalog/_configs/routes.php

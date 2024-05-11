@@ -82,6 +82,6 @@ class RoleAssignment implements RoleAssignmentInterface
     public function getUserRoles(User $user): array
     {
         $assignments = $this->entityManager->getRepository(self::class)->findBy(['user' => $user]);
-        return array_map(static fn(self $a) => $a->getRole(), $assignments);
+        return array_map(static fn (self $a) => $a->getRole(), $assignments);
     }
 }

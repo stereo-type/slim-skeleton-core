@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Core\RequestValidators;
 
@@ -18,7 +18,7 @@ class UpdatePasswordRequestValidator implements RequestValidatorInterface
         $v->rule('required', ['currentPassword', 'newPassword'])->message('Required field');
         $v->rule('lengthMin', 'newPassword', '8')->label('Password');
         $v->rule(
-            fn($field, $value, $params, $fields) => password_verify($data['currentPassword'], $user->getPassword()),
+            fn ($field, $value, $params, $fields) => password_verify($data['currentPassword'], $user->getPassword()),
             'currentPassword',
         )->message('Invalid current password');
 

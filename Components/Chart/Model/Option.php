@@ -17,12 +17,14 @@ class Option
     ) {
     }
 
-    public function __toString():string {
+    public function __toString(): string
+    {
         $value = trim((string)$this->value);
         return "$this->key = \"$value\"";
     }
 
-    public function toArray():array {
+    public function toArray(): array
+    {
         return  [
             $this->key => $this->value,
         ];

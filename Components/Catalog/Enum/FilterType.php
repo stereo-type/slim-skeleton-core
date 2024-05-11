@@ -17,7 +17,6 @@ use App\Core\Components\Catalog\Model\Filter\Type\Space;
 
 enum FilterType: string
 {
-
     case input = 'input';
 
     case space = 'space';

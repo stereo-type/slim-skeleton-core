@@ -13,7 +13,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 #[ORM\Entity, ORM\Table('users')]
 #[ORM\HasLifecycleCallbacks]
 class User implements UserInterface
@@ -131,7 +130,7 @@ class User implements UserInterface
 
     public function getRoles(): array
     {
-        return array_map(static fn(RoleAssignmentInterface $e) => $e->getRole(), $this->assignments->toArray());
+        return array_map(static fn (RoleAssignmentInterface $e) => $e->getRole(), $this->assignments->toArray());
     }
 
     public function isAdmin(): bool

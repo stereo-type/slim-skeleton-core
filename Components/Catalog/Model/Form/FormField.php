@@ -11,7 +11,6 @@ namespace App\Core\Components\Catalog\Model\Form;
 
 readonly class FormField
 {
-
     /**
      * @param string $fieldName
      * @param string $fieldType - класс - наследник Symfony\Component\Form\AbstractType

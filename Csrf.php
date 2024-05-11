@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -18,7 +18,7 @@ readonly class Csrf
 
     public function failureHandler(): Closure
     {
-        return fn(
+        return fn (
             ServerRequestInterface $request,
             RequestHandlerInterface $handler
         ) => $this->responseFactory->createResponse()->withStatus(ServerStatus::UNAUTHORIZED->value);

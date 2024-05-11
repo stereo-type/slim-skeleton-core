@@ -13,7 +13,6 @@ use App\Core\Components\Catalog\Model\Table\Collections\Attributes;
 
 class Page extends Filter
 {
-
     public const INIT_PAGE = 1;
 
     private function _type(): string

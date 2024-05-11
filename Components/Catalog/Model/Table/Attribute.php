@@ -11,14 +11,14 @@ namespace App\Core\Components\Catalog\Model\Table;
 
 readonly class Attribute
 {
-
     public function __construct(
         public string $key,
         public mixed $value
     ) {
     }
 
-    public function __toString():string {
+    public function __toString(): string
+    {
         $value = trim((string)$this->value);
         return "$this->key = \"$value\"";
     }

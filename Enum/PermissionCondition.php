@@ -2,7 +2,7 @@
 
 namespace App\Core\Enum;
 
-enum  PermissionCondition: string
+enum PermissionCondition: string
 {
     case all = 'all';
     case any = 'any';

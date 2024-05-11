@@ -32,11 +32,8 @@ use Twig\Extension\DebugExtension;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\RuntimeLoader\FactoryRuntimeLoader;
 
-
 readonly class Builder
 {
-
-
     public function __construct(private Config $config, private ContainerInterface $container)
     {
     }
@@ -47,23 +44,24 @@ readonly class Builder
      * @throws NotFoundExceptionInterface
      * @throws LoaderError
      */
-    public function twig(): Twig {
+    public function twig(): Twig
+    {
         $config = $this->config;
         $container = $this->container;
 
         $appVariableReflection = new ReflectionClass(AppVariable::class);
         $vendorTwigBridgeDirectory = dirname($appVariableReflection->getFileName());
         $paths = [VIEW_PATH, $vendorTwigBridgeDirectory.'/Resources/views/Form'];
-//            $t = microtime(true);
+        //            $t = microtime(true);
         //TODO навалить кешей для прода 0.001 секунды для 40 папок
         foreach (Files::getPathsRecursively(APP_PATH, 'templates') as $p) {
             if (!in_array($p, $paths, true)) {
                 $paths[] = $p;
             }
         }
-//            dump(count($paths));
-//            $t1 = microtime(true);
-//            dump($t1-$t);
+        //            dump(count($paths));
+        //            $t1 = microtime(true);
+        //            dump($t1-$t);
         $twig = Twig::create($paths, [
             'cache'       => STORAGE_PATH.'/cache/templates',
             'auto_reload' => AppEnvironment::isDevelopment($config->get('app_environment')),
@@ -81,7 +79,8 @@ readonly class Builder
         $twig->addExtension(new IntentExtension());
         $twig->addExtension(new DebugExtension());
         $formEngine = new TwigRendererEngine(
-            $config->get('twig.default_form_theme', ['form_div_layout.html.twig']), $twig->getEnvironment()
+            $config->get('twig.default_form_theme', ['form_div_layout.html.twig']),
+            $twig->getEnvironment()
         );
         $twig->addRuntimeLoader(
             new FactoryRuntimeLoader(

@@ -18,7 +18,6 @@ use App\Core\Components\Catalog\Providers\EntityDataProvider;
 
 class UserCatalogDataProvider extends EntityDataProvider
 {
-
     public const ENTITY_CLASS = User::class;
 
     public function exclude_entity_properties(): array

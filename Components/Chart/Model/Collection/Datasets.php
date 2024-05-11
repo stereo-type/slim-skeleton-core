@@ -46,7 +46,7 @@ class Datasets extends ArrayCollection
      */
     public function toArray(): array
     {
-        return array_map(static fn(DataSet $dataset) => $dataset->toArray(), parent::toArray());
+        return array_map(static fn (DataSet $dataset) => $dataset->toArray(), parent::toArray());
     }
 
     public static function fromArray(iterable $array): Datasets
@@ -54,6 +54,6 @@ class Datasets extends ArrayCollection
         if ($array instanceof self) {
             return $array;
         }
-        return new Datasets(array_map(static fn($e) => DataSet::fromArray($e), (array)$array));
+        return new Datasets(array_map(static fn ($e) => DataSet::fromArray($e), (array)$array));
     }
 }

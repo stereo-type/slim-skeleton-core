@@ -11,7 +11,6 @@ namespace App\Core\Components\Catalog\Model\Filter\Type;
 
 class Input extends Filter
 {
-
     private function _type(): string
     {
         return $this->attributes['type'] ?? 'text';

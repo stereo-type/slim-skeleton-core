@@ -7,7 +7,6 @@ use App\Core\Components\Admin\Model\Tree\AdminRoot;
 use App\Core\Lib\Url;
 use Slim\App;
 
-
 return static function (App $app, AdminRoot $root): void {
     $usersSub = [];
     $usersSub [] = new AdminCategory('accounts', 'Учетные записи', [

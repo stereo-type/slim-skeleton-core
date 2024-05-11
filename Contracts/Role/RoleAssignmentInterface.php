@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 
 interface RoleAssignmentInterface
 {
-
     public function getRole(): Role;
 
     public function addUserRole(User $user, Role $role, bool $flush = true): void;

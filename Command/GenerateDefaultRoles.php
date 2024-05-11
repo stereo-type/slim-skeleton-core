@@ -41,4 +41,3 @@ class GenerateDefaultRoles extends Command
         return Command::SUCCESS;
     }
 }
-

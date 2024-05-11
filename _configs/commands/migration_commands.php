@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Tools\Console\Command\CurrentCommand;
@@ -18,7 +18,7 @@ use Doctrine\Migrations\Tools\Console\Command\UpToDateCommand;
 use Doctrine\Migrations\Tools\Console\Command\VersionCommand;
 
 /**Список команд миграций для консольного приложения*/
-return static fn(DependencyFactory $dependencyFactory) => [
+return static fn (DependencyFactory $dependencyFactory) => [
     new CurrentCommand($dependencyFactory),
     new DumpSchemaCommand($dependencyFactory),
     new ExecuteCommand($dependencyFactory),

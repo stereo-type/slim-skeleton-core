@@ -14,7 +14,6 @@ use HTMLPurifier_Config;
 
 class Purifier
 {
-
     private static ?HTMLPurifier $purifier = null;
     private HTMLPurifier $_purifier;
 

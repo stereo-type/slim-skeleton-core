@@ -4,7 +4,6 @@ namespace App\Core\Lib;
 
 class Numbers
 {
-
     public const DECIMAL_DELIMITER = 100000000;
     public const DECIMAL_LENGTH = 8;
 
@@ -25,9 +24,9 @@ class Numbers
         $decimal = $decimal ?? 0;
         $fractionPart = number_format($decimal / self::DECIMAL_DELIMITER, self::DECIMAL_LENGTH, '.', '');
         return $integer . '.' . str_replace(
-                '0.',
-                '',
-                str_pad($fractionPart, self::DECIMAL_LENGTH, 0)
-            );
+            '0.',
+            '',
+            str_pad($fractionPart, self::DECIMAL_LENGTH, 0)
+        );
     }
 }

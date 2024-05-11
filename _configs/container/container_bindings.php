@@ -145,19 +145,19 @@ $coreBindings = [
      * The following two bindings are needed for EntryFilesTwigExtension & AssetExtension to work for Twig
      */
     'webpack_encore.packages'               =>
-        static fn() => new Packages(new Package(new JsonManifestVersionStrategy(BUILD_PATH . '/manifest.json'))),
+        static fn () => new Packages(new Package(new JsonManifestVersionStrategy(BUILD_PATH . '/manifest.json'))),
     'webpack_encore.tag_renderer'           =>
-        static fn(ContainerInterface $container) => new TagRenderer(
+        static fn (ContainerInterface $container) => new TagRenderer(
             new EntrypointLookup(BUILD_PATH . '/entrypoints.json'),
             $container->get('webpack_encore.packages')
         ),
-    ResponseFactoryInterface::class         => static fn(App $app) => $app->getResponseFactory(),
+    ResponseFactoryInterface::class         => static fn (App $app) => $app->getResponseFactory(),
     AuthInterface::class                    =>
-        static fn(ContainerInterface $container) => $container->get(Auth::class),
+        static fn (ContainerInterface $container) => $container->get(Auth::class),
     UserProviderServiceInterface::class     =>
-        static fn(ContainerInterface $container) => $container->get(UserProviderRepository::class),
+        static fn (ContainerInterface $container) => $container->get(UserProviderRepository::class),
     RequestValidatorFactoryInterface::class =>
-        static fn(ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
+        static fn (ContainerInterface $container) => $container->get(RequestValidatorFactory::class),
     'csrf'                                  =>
         static function (ResponseFactoryInterface $responseFactory, Csrf $csrf) {
             return new Guard($responseFactory, failureHandler: $csrf->failureHandler(), persistentTokenMode: true);
@@ -177,9 +177,9 @@ $coreBindings = [
             return $clockwork;
         },
     EntityManagerServiceInterface::class    =>
-        static fn(EntityManagerInterface $entityManager) => new EntityManagerService($entityManager),
+        static fn (EntityManagerInterface $entityManager) => new EntityManagerService($entityManager),
     SessionInterface::class                 =>
-        static fn(Config $config, ContainerInterface $container) => new Session(
+        static fn (Config $config, ContainerInterface $container) => new Session(
             new SessionConfig(
                 $config->get('session.name', ''),
                 $config->get('session.flash_name', 'flash'),
@@ -197,9 +197,9 @@ $coreBindings = [
             $transport = Transport::fromDsn($config->get('mailer.dsn'));
             return new Mailer($transport);
         },
-    BodyRendererInterface::class            => static fn(Twig $twig) => new BodyRenderer($twig->getEnvironment()),
-    RouteParserInterface::class             => static fn(App $app) => $app->getRouteCollector()->getRouteParser(),
-    CacheInterface::class                   => static fn(RedisAdapter $redisAdapter) => new Psr16Cache(
+    BodyRendererInterface::class            => static fn (Twig $twig) => new BodyRenderer($twig->getEnvironment()),
+    RouteParserInterface::class             => static fn (App $app) => $app->getRouteCollector()->getRouteParser(),
+    CacheInterface::class                   => static fn (RedisAdapter $redisAdapter) => new Psr16Cache(
         $redisAdapter
     ),
     RedisAdapter::class                     =>
@@ -213,8 +213,9 @@ $coreBindings = [
             return new RedisAdapter($redis);
         },
     RateLimiterFactory::class               =>
-        static fn(RedisAdapter $redisAdapter, Config $config) => new RateLimiterFactory(
-            $config->get('limiter'), new CacheStorage($redisAdapter)
+        static fn (RedisAdapter $redisAdapter, Config $config) => new RateLimiterFactory(
+            $config->get('limiter'),
+            new CacheStorage($redisAdapter)
         ),
     FormFactoryInterface::class             => static function () {
         $validatorBuilder = Validation::createValidatorBuilder();
@@ -229,9 +230,9 @@ $coreBindings = [
         return new FormFactory($registry);
     },
     /**TODO убрать один переводчик*/
-    Translator::class                       => static fn(Config $config) => new Translator($config->get('_lang')),
-    TranslatorInterface::class              => static fn(Config $config) => new  SyTranslator\Translator('en_En'),
-    Purifier::class                         => static fn() => Purifier::build(),
+    Translator::class                       => static fn (Config $config) => new Translator($config->get('_lang')),
+    TranslatorInterface::class              => static fn (Config $config) => new  SyTranslator\Translator('en_En'),
+    Purifier::class                         => static fn () => Purifier::build(),
     RequestConvertor::class                 => create(RequestConvertor::class),
 ];
 

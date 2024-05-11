@@ -14,7 +14,6 @@ use App\Core\Components\Catalog\Model\Table\Collections\Rows;
 
 readonly class Table
 {
-
     public Attributes $attributes;
 
     public function __construct(

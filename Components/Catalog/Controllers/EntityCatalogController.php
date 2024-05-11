@@ -24,10 +24,8 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-
 abstract class EntityCatalogController extends CatalogController
 {
-
     public const FORM_TEMPLATE = 'catalog/edit_form_layout.twig';
     public const FORM_TEMPLATE_AJAX = 'catalog/edit_form.twig';
 

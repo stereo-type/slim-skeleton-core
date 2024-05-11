@@ -17,7 +17,6 @@ use Psr\Container\NotFoundExceptionInterface;
 
 enum ParamType: string
 {
-
     case PARAM_INT = 'int';
 
     case PARAM_TEXT = 'text';
