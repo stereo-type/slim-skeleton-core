@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Command;
 
 use App\Core\Contracts\EntityManagerServiceInterface;
+use App\Core\Contracts\User\AuthInterface;
 use App\Core\Repository\Role\RoleService;
 
 use Exception;
@@ -18,8 +19,10 @@ class GenerateDefaultRoles extends Command
     protected static $defaultName = 'app:generate-roles';
     protected static $defaultDescription = 'Generates default roles';
 
-    public function __construct(private readonly EntityManagerServiceInterface $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManagerServiceInterface $entityManager,
+        private readonly AuthInterface $authService
+    ) {
         parent::__construct();
     }
 
@@ -32,7 +35,7 @@ class GenerateDefaultRoles extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            $service = new RoleService($this->entityManager);
+            $service = new RoleService($this->entityManager, $this->authService);
             $service->create_default_roles();
         } catch (Throwable $e) {
             return Command::FAILURE;
