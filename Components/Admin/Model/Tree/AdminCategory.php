@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace App\Core\Components\Admin\Model\Tree;
 
-
 use App\Core\Components\Admin\Model\Tree\Interfaces\LinkableSettingsPage;
 use App\Core\Components\Admin\Model\Tree\Interfaces\ParentablePartOfAdminTree;
 use App\Core\Components\Admin\Model\Tree\Interfaces\PartOfAdminTree;
@@ -18,7 +17,6 @@ use Psr\Http\Message\UriInterface;
 
 class AdminCategory implements ParentablePartOfAdminTree, LinkableSettingsPage
 {
-
     protected array $category_cache;
     public array $visiblepath;
     public array $path;
@@ -88,7 +86,7 @@ class AdminCategory implements ParentablePartOfAdminTree, LinkableSettingsPage
                 debugging('Duplicate admin category name: ' . $something->name);
             } else {
                 $this->category_cache[$something->name] = $something;
-                $something->category_cache =& $this->category_cache;
+                $something->category_cache = & $this->category_cache;
                 foreach ($something->children as $child) {
                     // just in case somebody already added subcategories
                     if ($child instanceof self) {
@@ -96,7 +94,7 @@ class AdminCategory implements ParentablePartOfAdminTree, LinkableSettingsPage
                             debugging('Duplicate admin category name: ' . $child->name);
                         } else {
                             $this->category_cache[$child->name] = $child;
-                            $child->category_cache =& $this->category_cache;
+                            $child->category_cache = & $this->category_cache;
                         }
                     }
                 }

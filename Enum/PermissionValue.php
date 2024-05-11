@@ -2,7 +2,7 @@
 
 namespace App\Core\Enum;
 
-enum  PermissionValue: string
+enum PermissionValue: string
 {
     case has = 'has';
     case no = 'no';

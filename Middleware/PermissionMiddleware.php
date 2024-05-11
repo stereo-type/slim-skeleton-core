@@ -20,7 +20,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-
 class PermissionMiddleware implements MiddlewareInterface
 {
     /**
@@ -83,9 +82,9 @@ class PermissionMiddleware implements MiddlewareInterface
             foreach ($roles as $role) {
                 if ($role instanceof Role) {
 
-//                    if ($role->getName() == $this->role->getName()) {
-//                        return $handler->handle($request);
-//                    }
+                    //                    if ($role->getName() == $this->role->getName()) {
+                    //                        return $handler->handle($request);
+                    //                    }
                 }
             }
         }

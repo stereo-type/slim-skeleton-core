@@ -17,8 +17,6 @@ use InvalidArgumentException;
 
 class Times
 {
-
-
     public static function monthBegin(int $timestamp = 0, Format $format = Format::DATETIME): string|int|DateTime
     {
         if ($timestamp === 0) {
@@ -66,7 +64,7 @@ class Times
 
     public static function intervalSeconds(DateInterval $interval): int
     {
-        $reference = new DateTimeImmutable;
+        $reference = new DateTimeImmutable();
         $endTime = $reference->add($interval);
         return $endTime->getTimestamp() - $reference->getTimestamp();
     }

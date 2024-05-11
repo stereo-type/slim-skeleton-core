@@ -16,8 +16,7 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class UserFilter extends SQLFilter
 {
-
-    static array $_users = [];
+    public static array $_users = [];
 
     /**
      * @param string $parameter
@@ -25,7 +24,8 @@ class UserFilter extends SQLFilter
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    private function getUser(string $parameter): UserInterface {
+    private function getUser(string $parameter): UserInterface
+    {
         $id = str_replace("'", '', $parameter);
         if(array_key_exists($id, self::$_users)) {
             return self::$_users[$id];
@@ -55,7 +55,7 @@ class UserFilter extends SQLFilter
 
 
         $user = $this->getUser($this->getParameter('user_id'));
-        if($user->isAdmin()){
+        if($user->isAdmin()) {
             return '';
         }
 

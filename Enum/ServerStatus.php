@@ -11,7 +11,6 @@ namespace App\Core\Enum;
 
 enum ServerStatus: int
 {
-
     case SUCCESS = 200;
     case CREATED = 201;
     case ACCEPTED = 202;
@@ -25,7 +24,7 @@ enum ServerStatus: int
     case BAD_REQUEST = 400;
     case UNAUTHORIZED = 401;
     case FORBIDDEN = 403;
-    case NOT_FOUND_REQUEST= 404;
+    case NOT_FOUND_REQUEST = 404;
 
     case SERVER_ERROR = 500;
     case BAD_GATEWAY = 502;

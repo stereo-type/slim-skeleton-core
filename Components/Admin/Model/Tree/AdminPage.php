@@ -16,7 +16,6 @@ use stdClass;
 
 class AdminPage implements PartOfAdminTree, LinkableSettingsPage
 {
-
     public array $visiblepath;
     public array $path;
     public bool $is_category;

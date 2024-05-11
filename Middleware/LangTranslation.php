@@ -19,8 +19,6 @@ use Slim\Views\Twig;
 
 readonly class LangTranslation implements MiddlewareInterface
 {
-
-
     public function __construct(private Twig $twig, private Translator $translator)
     {
     }

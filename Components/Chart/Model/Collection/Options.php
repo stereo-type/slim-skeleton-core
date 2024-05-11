@@ -46,7 +46,7 @@ class Options extends ArrayCollection
      */
     public function toArray(): array
     {
-        $options = array_map(static fn(Option $option) => $option->toArray(), parent::toArray());
+        $options = array_map(static fn (Option $option) => $option->toArray(), parent::toArray());
         return array_merge(...$options);
     }
 

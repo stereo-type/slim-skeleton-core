@@ -23,6 +23,6 @@ class UserCatalogController extends EntityCatalogController
 
     public static function get_index_route(): string
     {
-       return '/admin/user';
+        return '/admin/user';
     }
 }

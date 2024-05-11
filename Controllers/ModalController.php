@@ -20,8 +20,6 @@ use Twig\Error\SyntaxError;
 
 readonly class ModalController
 {
-
-
     public function __construct(
         private RequestService $requestService,
         private ResponseFormatter $responseFormatter

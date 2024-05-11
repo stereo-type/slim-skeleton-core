@@ -63,10 +63,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-
 abstract class EntityDataProvider extends AbstractDataProvider implements CatalogFormInterface
 {
-
     public const ENTITY_CLASS = null;
 
     public const ENTITY_ALIES = 'e';
@@ -177,7 +175,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
      */
     final protected function get_named(): array
     {
-        return array_map(static fn($item) => $item->replacedName ?? $item->name, $this->get_properties());
+        return array_map(static fn ($item) => $item->replacedName ?? $item->name, $this->get_properties());
     }
 
 
@@ -199,7 +197,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         }
 
         $props = $this->reflection->getProperties();
-        $propsNames = array_map(static fn($item) => $item->name, $props);
+        $propsNames = array_map(static fn ($item) => $item->name, $props);
         $propsValues = array_map(static function ($item) {
             $ob = new stdClass();
             $ob->name = $item->name;
@@ -210,7 +208,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
             $ob->enumClass = null;
 
             $attributes = array_map(
-                static fn($attr) => (object)['name' => $attr->getName(), 'arguments' => $attr->getArguments()],
+                static fn ($attr) => (object)['name' => $attr->getName(), 'arguments' => $attr->getArguments()],
                 $item->getAttributes()
             );
 
@@ -279,8 +277,8 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select(self::ENTITY_ALIES)
             ->from(static::ENTITY_CLASS, self::ENTITY_ALIES);
-        $simpleProps = array_keys(array_filter($this->get_properties(), static fn($p) => !$p->manyToOne));
-        $manyToOne = array_filter($this->get_properties(), static fn($p) => $p->manyToOne);
+        $simpleProps = array_keys(array_filter($this->get_properties(), static fn ($p) => !$p->manyToOne));
+        $manyToOne = array_filter($this->get_properties(), static fn ($p) => $p->manyToOne);
 
         $allowed = FilterComparisons::fromArray(
             array_combine($simpleProps, array_fill(0, count($simpleProps), Comparison::CONTAINS))
@@ -288,7 +286,10 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
 
         foreach ($manyToOne as $key => $m) {
             $allowed[] = new FilterComparison(
-                $key, Comparison::EQ, manyToOne: true, manyToOneClass: $m->manyToOneClass
+                $key,
+                Comparison::EQ,
+                manyToOne: true,
+                manyToOneClass: $m->manyToOneClass
             );
         }
 
@@ -311,7 +312,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 $name = $prop->replacedName ?? $prop->name;
                 if ($prop->isEnum) {
                     $cases = $prop->enumClass::cases();
-                    $keys = array_map(static fn($i) => $i->value, $cases);
+                    $keys = array_map(static fn ($i) => $i->value, $cases);
                     $values = array_map(static function ($v) use ($translator) {
                         return $v instanceof TranslatableInterface ? $v->trans($translator) : $v->value;
                     }, $cases);
@@ -325,8 +326,8 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                 } elseif ($prop->manyToOne) {
                     $list = $this->entityManager->getRepository($prop->manyToOneClass)->findAll();
                     $method = self::ENTITY_REF_LINK_METHOD;
-                    $keys = array_map(static fn($i) => $i->getId(), $list);
-                    $values = array_map(static fn($i) => $i->$method(), $list);
+                    $keys = array_map(static fn ($i) => $i->getId(), $list);
+                    $values = array_map(static fn ($i) => $i->$method(), $list);
                     $options = ['' => $name] + array_combine($keys, $values);
                     $filters[] = Filter::create(
                         FilterType::select,
@@ -451,7 +452,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
      */
     protected function manage_buttons(Twig $twig, int $id): string
     {
-        $buttons = array_map(static fn($item) => $item->toMap(), $this->buttons());
+        $buttons = array_map(static fn ($item) => $item->toMap(), $this->buttons());
         return $twig->fetch('/catalog/manage_buttons.twig', ['buttons' => $buttons, 'id' => $id]);
     }
 
@@ -568,7 +569,7 @@ abstract class EntityDataProvider extends AbstractDataProvider implements Catalo
                         ->findBy(static::FORM_ENTITY_PARAMS_ASSOCIATION);
 
                     $method = static::ENTITY_REF_LINK_METHOD;
-                    $names = array_map(static fn($e) => $e->$method(), $entities);
+                    $names = array_map(static fn ($e) => $e->$method(), $entities);
                     $choices = array_combine($names, $entities);
                     $options = ['attr' => ['placeholder' => ucfirst($fieldName)], 'choices' => $choices];
                     $formBuilder->add($fieldName, ChoiceType::class, $options);

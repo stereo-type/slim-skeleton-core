@@ -12,9 +12,8 @@ namespace App\Core\Components\Catalog\Model\Filter\Type;
 use App\Core\Components\Catalog\Model\Table\Collections\Attributes;
 use App\Core\Components\Catalog\Enum\ParamType;
 
- class PerPage extends Select
+class PerPage extends Select
 {
-
     public static function build(): self
     {
         return new self(

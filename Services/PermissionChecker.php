@@ -48,10 +48,10 @@ readonly class PermissionChecker
 
         switch ($condition) {
             case PermissionCondition::all:
-                $has = array_filter($hasPermissions, static fn($val) => $val);
+                $has = array_filter($hasPermissions, static fn ($val) => $val);
                 return count($has) === count($requiredPermissions);
             case PermissionCondition::any:
-                return !empty(array_filter($hasPermissions, static fn($val) => $val));
+                return !empty(array_filter($hasPermissions, static fn ($val) => $val));
         }
 
         return false;

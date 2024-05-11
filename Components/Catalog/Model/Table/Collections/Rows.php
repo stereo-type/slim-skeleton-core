@@ -15,7 +15,6 @@ use InvalidArgumentException;
 
 class Rows extends ArrayCollection
 {
-
     /**
      * @param  Row[]  $elements
      */

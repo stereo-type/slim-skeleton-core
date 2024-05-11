@@ -23,7 +23,8 @@ class CellParams
         $this->header = $value;
     }
 
-    public function toMap():array {
+    public function toMap(): array
+    {
         return [
             'colspan' => $this->colspan,
             'rowspan' => $this->rowspan,

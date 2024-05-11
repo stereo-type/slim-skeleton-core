@@ -15,7 +15,6 @@ use App\Core\Components\Chart\Model\Collection\Options;
 
 readonly class Chart
 {
-
     public function __construct(
         private Library $library,
         private ChartType|ApexType $type,

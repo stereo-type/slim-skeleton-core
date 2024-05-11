@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace App\Core\Components\Admin\Model\Tree\Interfaces;
 
-interface ParentablePartOfAdminTree extends PartOfAdminTree {
-
+interface ParentablePartOfAdminTree extends PartOfAdminTree
+{
     /**
      * @param string $destinationname The internal name of the new parent for $something.
      * @param PartOfAdminTree $something The object to be added.

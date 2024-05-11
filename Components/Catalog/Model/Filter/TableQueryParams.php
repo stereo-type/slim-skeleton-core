@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace App\Core\Components\Catalog\Model\Filter;
 
-
 use App\Core\Components\Catalog\Enum\OrderDir;
 use App\Core\Components\Catalog\Model\Filter\Collections\Filters;
 use App\Core\Components\Catalog\Model\Filter\Type\Filter;

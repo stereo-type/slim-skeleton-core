@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace App\Core\Components\Catalog\Model\Filter;
 
-
 readonly class TableData
 {
     public int $totalPage;
@@ -19,7 +18,6 @@ readonly class TableData
         public int $currentPage,
         public int $totalRecords,
         public int $perPage,
-
     ) {
         $this->totalPage = (int)ceil($totalRecords / $perPage);
     }

@@ -41,7 +41,7 @@ readonly class AdminController
         $header = $root->visibleName;
         $backButton = null;
         if (!is_null($category) && !empty($categories)) {
-            $cat = array_filter($categories, static fn($c) => $c->name === $category);
+            $cat = array_filter($categories, static fn ($c) => $c->name === $category);
             if (empty($cat)) {
                 $find = $root->locate($category);
                 if ($find) {

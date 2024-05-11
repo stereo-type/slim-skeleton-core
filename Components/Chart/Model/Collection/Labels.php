@@ -53,6 +53,6 @@ class Labels extends ArrayCollection
         if ($array instanceof self) {
             return $array;
         }
-        return new Labels(array_map(static fn($e) => (string)$e, (array)$array));
+        return new Labels(array_map(static fn ($e) => (string)$e, (array)$array));
     }
 }

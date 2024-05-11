@@ -24,7 +24,6 @@ use App\Core\Components\Catalog\Model\Table\Table;
 
 abstract class AbstractDataProvider implements CatalogDataProviderInterface, CatalogFilterInterface
 {
-
     protected TableQueryParams $params;
 
     /**При необходимости переопределения порядка сортировки по умолчанию/page/perpage, переопределить конструктор или использовать params*/

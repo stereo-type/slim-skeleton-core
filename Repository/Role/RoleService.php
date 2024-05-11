@@ -8,10 +8,8 @@ use App\Core\Contracts\User\UserInterface;
 use App\Core\Entity\Role;
 use Doctrine\DBAL\Connection;
 
-
 readonly class RoleService
 {
-
     public function __construct(
         private EntityManagerServiceInterface $entityManager,
         private AuthInterface $authService

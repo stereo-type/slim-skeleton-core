@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace App\Core\Components\Catalog\Model\Filter\Collections;
 
-
 use App\Core\Components\Catalog\Model\Filter\Type\Clear;
 use App\Core\Components\Catalog\Model\Filter\Type\Filter;
 use App\Core\Components\Catalog\Model\Filter\Type\Page;
@@ -27,7 +26,6 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class Filters extends ArrayCollection
 {
-
     /**
      * @param Filter[] $elements
      * @param bool $perpage

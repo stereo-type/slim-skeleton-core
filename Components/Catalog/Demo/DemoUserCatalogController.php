@@ -11,7 +11,6 @@ namespace App\Core\Components\Catalog\Demo;
 
 use App\Core\Components\Catalog\Controllers\EntityCatalogController;
 
-
 /**
  * маршруты прописаны тут
  * app/Core/Components/Catalog/_configs/routes.php
@@ -35,6 +34,6 @@ class DemoUserCatalogController extends EntityCatalogController
 
     public static function get_index_route(): string
     {
-       return '/demo_user_entities';
+        return '/demo_user_entities';
     }
 }

@@ -17,8 +17,7 @@ use App\Core\Components\Catalog\Enum\ParamType;
 
 abstract class Filter
 {
-
-    readonly public Attributes $attributes;
+    public readonly Attributes $attributes;
 
     public const FILTER_PARAM_VALUE = 'value';
     public const FORM_CONTROL = true;

@@ -15,7 +15,6 @@ use App\Core\Components\Catalog\Enum\ParamType;
 
 class Space extends Filter
 {
-
     public const IGNORE_IN_FILTER_REQUEST = true;
 
     public function __construct(
@@ -25,8 +24,7 @@ class Space extends Filter
         iterable  $params = [],
         int       $length = self::DEFAULT_LENGTH,
         ParamType $paramType = ParamType::PARAM_RAW
-    )
-    {
+    ) {
         parent::__construct($name, $attributes, $defaultValue, $params, $length, $paramType);
         $this->attributes->remove('class');
         $this->attributes->add(new Attribute('class', "length-$this->length"));

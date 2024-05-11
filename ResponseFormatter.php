@@ -14,7 +14,6 @@ use Twig\Error\SyntaxError;
 
 readonly class ResponseFormatter
 {
-
     public function __construct(private Twig $twig)
     {
     }

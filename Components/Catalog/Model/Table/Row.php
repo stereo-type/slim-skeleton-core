@@ -15,7 +15,6 @@ use Doctrine\Common\Collections\Collection;
 
 readonly class Row
 {
-
     public function __construct(
         public Cells $cells,
         public Attributes $attributes = new Attributes(),

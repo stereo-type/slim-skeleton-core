@@ -5,7 +5,6 @@ namespace App\Core\Entity;
 use App\Core\Enum\PermissionValue;
 use Doctrine\ORM\Mapping as ORM;
 
-
 #[ORM\Entity]
 #[ORM\Table('role_permissions')]
 #[ORM\UniqueConstraint(name: 'video_unique_idx', columns: ['role_id', 'permission_id'])]

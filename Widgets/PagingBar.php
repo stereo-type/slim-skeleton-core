@@ -12,7 +12,6 @@ use Twig\Error\SyntaxError;
 
 class PagingBar
 {
-
     public const PAGINBAR_TEMPLATE = 'catalog/paginbar.twig';
     /**
      * @var int The maximum number of pagelinks to display.

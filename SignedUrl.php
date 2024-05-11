@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -22,9 +22,9 @@ readonly class SignedUrl
         $signature = hash_hmac('sha256', $url, $this->config->get('app_key'));
 
         return $baseUrl . $this->routeParser->urlFor(
-                $routeName,
-                $routeParams,
-                $queryParams + ['signature' => $signature]
-            );
+            $routeName,
+            $routeParams,
+            $queryParams + ['signature' => $signature]
+        );
     }
 }

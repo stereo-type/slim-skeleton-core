@@ -15,7 +15,6 @@ use App\Core\Services\Translator;
 
 class TranslationExtension extends AbstractExtension
 {
-
     public function __construct(private readonly Translator $translator)
     {
     }

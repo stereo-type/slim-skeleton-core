@@ -13,10 +13,8 @@ use App\Core\Components\Catalog\Model\Table\Attribute;
 use Doctrine\Common\Collections\ArrayCollection;
 use InvalidArgumentException;
 
-
 class Attributes extends ArrayCollection
 {
-
     /**Метод слияния атрибутов, перезапись или добавление, добавление сработает только для списка JOINABLE*/
     final public const MERGE_OVERRIDE = 1;
     final public const MERGE_JOIN = 2;
@@ -98,7 +96,7 @@ class Attributes extends ArrayCollection
         foreach ($this->toArray() as $index => $element) {
             if ($element->key === $key) {
                 $removed = $element;
-//                unset($this->elements[$index]);
+                //                unset($this->elements[$index]);
                 parent::remove($index);
                 break;
             }
@@ -107,7 +105,7 @@ class Attributes extends ArrayCollection
     }
 
     public static function mergeAttributes(
-        int $mergeMode = self:: MERGE_OVERRIDE,
+        int $mergeMode = self::MERGE_OVERRIDE,
         Attributes ...$attributes
     ): Attributes {
         $_attr = [];
